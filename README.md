@@ -13,10 +13,11 @@ pip install websurfer
 ## Usage
 
 ```python
-import websurfer
+#For downloading web pages as html files
+from websurfer import site_downloader
 
 # returns .html file from the URL
-websurfer.download_site('https://example.io/')
+site_downloader.download_site('https://example.io/')
 
 ```
 
