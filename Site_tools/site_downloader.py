@@ -50,7 +50,9 @@ def download_site(site):
                 file.write(now.strftime("%d-%m-%Y, %H:%M:%S")+"\n\n")
                 file.write(r.text)
                 print("File creation succesfull")
+
         else: raise FileExistsError
+        
     except FileExistsError:
         msg = "File " + filename + " already exists."
         print(msg)
