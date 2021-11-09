@@ -42,7 +42,7 @@ def find_local_anchors(soup, start_anchor):
     return anchors
 
 if __name__ == "__main__":
-    url = "https://fi.wikipedia.org/wiki/Verkkokamera"
+    url = "https://webscraper.io/test-sites"
     start_anchor = "/"
 
     urls = crawl(url, start_anchor)

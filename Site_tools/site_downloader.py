@@ -52,7 +52,7 @@ def download_site(site):
                 print("File creation succesfull")
 
         else: raise FileExistsError
-        
+
     except FileExistsError:
         msg = "File " + filename + " already exists."
         print(msg)
@@ -69,5 +69,5 @@ __create_project_dir(DOWNLOADED+foldername)
 if __name__ == "__main__":
     site="https://webscraper.io/test-sites"
     s1 = download_site(site)
-    download_site("https://webscraper.io/test-sites/e-commerce/scroll")
+    download_site("https://webscraper.io/test-sites/contact")
     
