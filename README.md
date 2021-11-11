@@ -4,27 +4,47 @@ Websurfer is a Python library for downloading pages and crawling websites for in
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+Install packages using configuration file requirements.txt
+
+To install packages using pip:
 
 ```bash
-pip install websurfer
+pip install -r requirements.txt
 ```
 
 ## Usage
 
 ```python
-#For downloading web pages as html files
-from websurfer import site_downloader
+#Using site downloader:
+site="https://example.io/"
+s1 = download_site(site)
 
-# returns .html file from the URL
-site_downloader.download_site('https://example.io/')
-
+#or you could just
+download_site("https://example.io/contact")
 ```
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+--> 
+This creates "downloaded" dir inside project folder.
+downloaded folder contains directories with name of download date
+ex.
 
-Please make sure to update tests as appropriate.
++-- project_folder
+|
++---+-- downloaded
+    |
+    +---+-- 11-8-2021  <-- This means the folder was created 8th of november 2021   
+        +--  example.io.html
+        +--  example.io.contacts.html
+        .  
+        . 
+        .   
++---+-- site_tools
+    |
+    +-- site_downloader.py
+    +-- site_parser.py
++-- README.md
++-- requirements.txt
+
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
