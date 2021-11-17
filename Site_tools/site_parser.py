@@ -27,26 +27,12 @@ class Parser:
             print("Something went from reading the file...")
             exit()
 
-    def create_dataset(self):
-        """
-        Creates dataset of chosen html file
-    
-        Parameters:
-        None.
-    
-        Returns:
-        JSON dataset.
-        """
+    def __get_base_url(self):
+        with open(self.filepath, "r") as f:
+            base_url = f.readline().strip()
+        return base_url
 
-        dataset = {
-            "website" : self.filepath,
-            "title" : "",
-            "keywords" : "",
-            "description" : "",
-            "links" : []
-        }
-
-    def parse_anchors(self):
+    def __parse_anchors(self):
         """
         Parse html file for all the links 
     
@@ -61,8 +47,8 @@ class Parser:
         urls = []
 
         # check base url from downloaded file.
-        with open(self.filepath, "r") as f:
-            base_url = f.readline().strip()
+        
+        base_url = self.__get_base_url()
 
         # find every <a> tag from file, with href attribute.
         # store these anchors to a list
@@ -82,7 +68,34 @@ class Parser:
 
         return urls
 
+
+    def create_dataset(self):
+        """
+        Creates dataset of chosen html file
+    
+        Parameters:
+        None.
+    
+        Returns:
+        Dictionary dataset.
+        """
+
+        keywords = self.soup.find("meta", 
+                attrs={"name" : "keywords"}).get("content")
+        description = self.soup.find("meta", 
+                attrs={"name" : "description"}).get("content")
+
+        dataset = {
+            "filepath" : self.filepath,
+            "website URL" : self.__get_base_url(),
+            "title" : self.soup.title.string,
+            "keywords" : keywords.split(",") if keywords else "None",
+            "description" : description if description else "None",
+            "links" : self.__parse_anchors()
+        }
+
+        return dataset
+
 if __name__ == "__main__":
     p = Parser()
-    for a in p.parse_anchors():
-        print(a)
+    print(p.create_dataset())
