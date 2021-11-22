@@ -24,8 +24,9 @@ def download_site(site):
     """
 
     obj = parse.urlparse(site)
-    filename = obj.netloc + obj.path.replace("/", ".")
-
+    #filename = obj.netloc + obj.path.replace("/", ".")
+    filename = "".join([o.replace("/", ".") for o in obj])
+    print(filename)
 
     #Check if filename has "." as last char. This is just for the html filetype declaration.
     if filename[-1] == ".":

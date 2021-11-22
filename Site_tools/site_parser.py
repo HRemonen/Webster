@@ -79,11 +79,17 @@ class Parser:
         Returns:
         Dictionary dataset.
         """
-
-        keywords = self.soup.find("meta", 
+        try:
+            keywords = self.soup.find("meta", 
                 attrs={"name" : "keywords"}).get("content")
-        description = self.soup.find("meta", 
+        except AttributeError:
+            keywords = ""
+        
+        try:
+            description = self.soup.find("meta", 
                 attrs={"name" : "description"}).get("content")
+        except AttributeError:
+            description = ""
 
         dataset = {
             "filepath" : self.filepath,
