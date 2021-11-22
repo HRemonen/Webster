@@ -13,7 +13,7 @@ pip install -r requirements.txt
 ```
 
 ## Usage 
-### site_downloader module
+### Site_downloader module
 
 ```python
 #Using site downloader:
@@ -52,7 +52,7 @@ ex.
 +-- requirements.txt
 ```
 
-### site_parser module
+### Site_parser module
 
 ```python
 #Creating new site_parser. This opens file navigator to select the file to parse
@@ -63,10 +63,9 @@ data = p.create_dataset()
 
 ```
 
-#### create_dataset()
-```python
-#Creates a dataset from the file. This dataset contains:
+#### create_dataset(). Creates a dataset from the file. This dataset contains:
 
+```python
 dataset = {
     "filepath" : string / path, #filepath,
     "website URL" : string, #site url,
@@ -76,14 +75,11 @@ dataset = {
     "links" : list, #all <a> tag elements in file
     }
 ```
-##### Usage
+##### For example you could iterate through every link in the file and download the sites:
 
 ```python
-#For example you could iterate through every link in the file and download the sites:
-
 for site in data["links"]:
     site_downloader.download_site(site)
-
 ```
 
 ## License
