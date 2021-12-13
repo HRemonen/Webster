@@ -2,7 +2,7 @@ import site_downloader
 import site_parser
 import queue
 
-class Instance:
+class WebSurfer:
     def __init__(self) -> None:
         self.queue = queue.Queue()
         self.autoQueue = False
@@ -97,4 +97,4 @@ class Instance:
 
 
 if __name__ == "__main__":
-    Instance()
+    WebSurfer()
