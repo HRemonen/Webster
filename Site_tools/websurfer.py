@@ -5,29 +5,31 @@ import queue
 class Instance:
     def __init__(self) -> None:
         self.queue = queue.Queue()
+        self.autoQueue = False
         self.userInterface()
 
     def userInterface(self):
         CHOICES = ["s", "d", "p", "e"]
-        choices = """
-        Choices: 
-        (s)ettings
-        (d)ownload site
-        (p)arse site and create dataset
-        (e)xit
-        """
-
         print("""
-    Welcome to WebSurfer!
-    What would you like to do?""")
+        Welcome to WebSurfer!
+        What would you like to do?
+        """)
 
         while True:
             print("Main menu.")
-            print(choices)
-            c = input("Enter choice: ")
-            if c.lower() == "e":
+            print("""
+            Choices:
+            (s)ettings
+            (a)uto downloader
+            (d)ownload site                     (manual)
+            (p)arse site and create dataset     (manual)
+            (e)xit
+            """)
+
+            c = input("Enter choice: ").lower()
+            if c == "e":
                 break
-            elif c.lower() not in CHOICES:
+            elif c not in CHOICES:
                 print("Incorrect choice, try again")
             elif c == "s":
                 self.__settingsMenu()
@@ -42,19 +44,33 @@ class Instance:
 
     def __settingsMenu(self):
         SETTINGS_CHOICES = ["c", "i", "e"]
-        settings_choices = """
-        (c)reate queue
-        (i)mport queue
-        (e)xit
-        """
+
+        #Implement queue for URLs.
+        #user can create queue manually typing each URL seperately or
+        #user could also import queue from text file or
+        #user could also create queue from dataset urls.
          
         while True:
+            settings_choices = f"""
+            (c)reate queue manually
+            (i)mport URLs from text file
+            (t)oggle autodownloader queing      {self.autoQueue}
+            (e)xit
+            """
             print("Settings menu.")
             print(settings_choices)
-            c = input("Enter choice: ")
-            if c.lower() == "e":
+
+            c = input("Enter choice: ").lower()
+            if c == "e":
                 break
+            elif c == "t":
+                self.autoQueue = not self.autoQueue
+
         
+    def __autoDownloader(self):
+        #Automatic downloader.
+        #Downloads every URL from queue if there is any.
+        pass
 
     def __downloadMenu(self):
         print("Download menu.")
@@ -65,6 +81,11 @@ class Instance:
 
     def __parseMenu(self):
         print("Parse menu.")
+
+        #Implement feature to ask user what to do with the dataset
+        #user could save dataset to a database or not to save
+        #user could also view dataset if wanted
+
         p = site_parser.Parser()
         return p.create_dataset()
 
@@ -74,7 +95,6 @@ class Instance:
 #for site in data["links"]:
     #site_downloader.download_site(site)
 
-#You could also implement db or something else to store
-#the downloaded sites.
+
 if __name__ == "__main__":
     Instance()
