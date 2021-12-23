@@ -1,5 +1,7 @@
 import tkinter as tk
 import os
+import validators
+from urllib.parse import urlparse
 
 from tkinter import filedialog
 
@@ -24,9 +26,14 @@ class Parser:
             exit()
 
     def __get_base_url(self):
+        # read URL from the file downloaded
         with open(self.filepath, "r") as f:
-            base_url = f.readline().strip()
-        return base_url
+            base_url = urlparse(f.readline().strip())
+        
+        # get the base url for the relative URLs to work correctly
+        result = '{uri.scheme}://{uri.netloc}/'.format(uri=base_url)
+        
+        return result
 
     def __parse_anchors(self):
         """
@@ -42,8 +49,7 @@ class Parser:
         anchors = []
         urls = []
 
-        # check base url from downloaded file.
-        
+        # check base url from downloaded file.      
         base_url = self.__get_base_url()
         
 
@@ -52,7 +58,12 @@ class Parser:
         for a in self.soup.find_all("a"):
             anchor = a.attrs['href'] if "href" in a.attrs else ''
             if anchor.startswith("/"):
-                anchors.append(anchor)
+                # strip the first / from the URL to prevent "//"
+                anchors.append(anchor[1:])
+
+            #if anchor is URL istead of relative path add it to the urls list.
+            elif validators.url(anchor):
+                urls.append(anchor)
 
         # if the file had any anchors, combine these 
         # directories with base url.
@@ -94,7 +105,7 @@ class Parser:
             "title" : self.soup.title.string,
             "keywords" : keywords.split(",") if keywords else None,
             "description" : description if description else None,
-            "anchors" : self.__parse_anchors()
+            "URLs" : self.__parse_anchors()
         }
 
         return dataset
