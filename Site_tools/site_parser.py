@@ -45,6 +45,7 @@ class Parser:
         # check base url from downloaded file.
         
         base_url = self.__get_base_url()
+        
 
         # find every <a> tag from file, with href attribute.
         # store these anchors to a list
@@ -93,7 +94,7 @@ class Parser:
             "title" : self.soup.title.string,
             "keywords" : keywords.split(",") if keywords else None,
             "description" : description if description else None,
-            "links" : self.__parse_anchors()
+            "anchors" : self.__parse_anchors()
         }
 
         return dataset

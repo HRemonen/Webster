@@ -7,10 +7,9 @@ class WebSurfer:
     def __init__(self) -> None:
         self.queue = queue.Queue()
         self.autoQueue = False
-        self.userInterface()
 
-    def userInterface(self):
-        CHOICES = ["s", "d", "p", "e"]
+    def run(self):
+        CHOICES = ["s", "a", "d", "p", "e"]
         print("""
         Welcome to WebSurfer!
         What would you like to do?
@@ -18,13 +17,13 @@ class WebSurfer:
 
         while True:
             print("Main menu.")
-            print("""
+            print(f"""
             Choices:
-            (s)ettings
-            (a)uto downloader
-            (d)ownload site                     (manual)
-            (p)arse site and create dataset     (manual)
-            (e)xit
+            (s)ettings..............
+            (a)uto downloader.......(auto)
+            (d)ownload site.........(manual)
+            (p)arse site............(manual)
+            (e)xit..................
             """)
 
             c = input("Enter choice: ").lower()
@@ -34,6 +33,8 @@ class WebSurfer:
                 print("Incorrect choice, try again")
             elif c == "s":
                 self.__settingsMenu()
+            elif c == "a":
+                self.__autoDownloader()
             elif c == "d":
                 self.__downloadMenu()           
             elif c == "p":
@@ -43,25 +44,23 @@ class WebSurfer:
 
 
     def __settingsMenu(self):
-        SETTINGS_CHOICES = ["c", "i", "e"]
+        SETTINGS_CHOICES = ["c", "i", "b"]
 
         #Implement queue for URLs.
-        #user can create queue manually typing each URL seperately or
-        #user could also import queue from text file or
+        #user could import queue from text file or
         #user could also create queue from dataset urls.
          
         while True:
             settings_choices = f"""
-            (c)reate queue manually
-            (i)mport URLs from text file
-            (t)oggle autodownloader queing      {self.autoQueue}
-            (e)xit
+            (i)mport URLs from text file to queue
+            (t)oggle autodownloader auto queue      {self.autoQueue}
+            (b)ack
             """
             print("Settings menu.")
             print(settings_choices)
 
             c = input("Enter choice: ").lower()
-            if c == "e":
+            if c == "b":
                 break
             elif c == "t":
                 self.autoQueue = not self.autoQueue
@@ -99,4 +98,5 @@ class WebSurfer:
 
 
 if __name__ == "__main__":
-    WebSurfer()
+    ws1 = WebSurfer()
+    ws1.run()
