@@ -1,6 +1,7 @@
 import site_downloader
 import site_parser
 import queue
+import json
 
 class WebSurfer:
     def __init__(self) -> None:
@@ -36,8 +37,7 @@ class WebSurfer:
             elif c == "d":
                 self.__downloadMenu()           
             elif c == "p":
-                dataset = self.__parseMenu()
-                print(dataset)
+                self.__parseMenu()             
             else:
                 print("Something went wrong.")
 
@@ -82,12 +82,14 @@ class WebSurfer:
     def __parseMenu(self):
         print("Parse menu.")
 
-        #Implement feature to ask user what to do with the dataset
-        #user could save dataset to a database or not to save
-        #user could also view dataset if wanted
-
+        #Implement feature to save parsedata to database
+        
         p = site_parser.Parser()
-        return p.create_dataset()
+
+        # site_parser returns dictionary, convert dict to json object.
+        dumps = json.dumps(p.create_dataset(), indent=4)
+
+        print(dumps)
 
 
 #You could start downloading all the associated URLs related to

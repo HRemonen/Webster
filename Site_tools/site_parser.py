@@ -1,11 +1,7 @@
 import tkinter as tk
 import os
-import queue
-import requests
 
 from tkinter import filedialog
-from typing import Type
-from pathlib import Path
 
 from bs4 import BeautifulSoup
 
@@ -95,8 +91,8 @@ class Parser:
             "filepath" : self.filepath,
             "website URL" : self.__get_base_url(),
             "title" : self.soup.title.string,
-            "keywords" : keywords.split(",") if keywords else "None",
-            "description" : description if description else "None",
+            "keywords" : keywords.split(",") if keywords else None,
+            "description" : description if description else None,
             "links" : self.__parse_anchors()
         }
 
