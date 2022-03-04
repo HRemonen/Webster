@@ -25,7 +25,7 @@ class Parser:
             print("Something went from reading the file...")
             exit()
 
-    def __get_base_url(self):
+    def get_base_url(self):
         # read URL from the file downloaded
         with open(self.filepath, "r") as f:
             base_url = urlparse(f.readline().strip())
@@ -35,7 +35,7 @@ class Parser:
         
         return result
 
-    def __parse_anchors(self):
+    def parse_anchors(self):
         """
         Parse html file for all the links 
     
@@ -50,7 +50,7 @@ class Parser:
         urls = []
 
         # check base url from downloaded file.      
-        base_url = self.__get_base_url()
+        base_url = self.get_base_url()
         
 
         # find every <a> tag from file, with href attribute.
@@ -101,11 +101,11 @@ class Parser:
 
         dataset = {
             "filepath" : self.filepath,
-            "website URL" : self.__get_base_url(),
+            "website URL" : self.get_base_url(),
             "title" : self.soup.title.string,
             "keywords" : keywords.split(",") if keywords else None,
             "description" : description if description else None,
-            "URLs" : self.__parse_anchors()
+            "URLs" : self.parse_anchors()
         }
 
         return dataset

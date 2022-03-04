@@ -68,10 +68,11 @@ class WebSurfer:
         
     def __autoDownloader(self):
         #Automatic downloader.
-        #Downloads every URL from queue if there is any.
+        #Downloads and parses every URL from queue if there is any.
         pass
 
     def __downloadMenu(self):
+        #Manual downloadmenu, returns html file of downloaded site.
         print("Download menu.")
         site_to_download = input("Enter site URL: ")
         print()
@@ -79,16 +80,15 @@ class WebSurfer:
         site_downloader.download_site(site_to_download)
 
     def __parseMenu(self):
+        #Manual parsemenu, returns json file of parsed site.
         print("Parse menu.")
-
-        #Implement feature to save parsedata to database
         
         p = site_parser.Parser()
+        filename = p.create_dataset()["title"]
+        data = p.create_dataset()
 
-        # site_parser returns dictionary, convert dict to json object.
-        dumps = json.dumps(p.create_dataset(), indent=4)
-
-        print(dumps)
+        with open(filename, 'w') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
 
 
 #You could start downloading all the associated URLs related to
