@@ -2,6 +2,12 @@ import site_downloader
 import site_parser
 import queue
 import json
+import os
+import tkinter as tk
+
+from tkinter import filedialog
+
+from bs4 import BeautifulSoup
 
 class WebSurfer:
     def __init__(self) -> None:
@@ -72,7 +78,16 @@ class WebSurfer:
         pass
 
     def __downloadMenu(self):
-        #Manual downloadmenu, returns html file of downloaded site.
+        """
+        Download manually selected site address ex. "https://ocw.mit.edu/".
+    
+        Parameters:
+        None.
+    
+        Returns:
+        HTML file.
+        """
+
         print("Download menu.")
         site_to_download = input("Enter site URL: ")
         print()
@@ -80,10 +95,37 @@ class WebSurfer:
         site_downloader.download_site(site_to_download)
 
     def __parseMenu(self):
-        #Manual parsemenu, returns json file of parsed site.
+        """
+        Parse manually selected html file.
+    
+        Parameters:
+        None.
+    
+        Returns:
+        JSON dataset from the site.
+        """
+
         print("Parse menu.")
         
-        p = site_parser.Parser()
+        root = tk.Tk()
+        root.withdraw()
+        directory = os.getcwd()+"/downloaded"
+
+        try:
+            filepath = filedialog.askopenfilename(initialdir=directory, title="Select files")
+            if not filepath.endswith(".html"):
+                raise TypeError
+            soup = BeautifulSoup(open(filepath, "r"), "html.parser")
+
+        except TypeError:
+            print("File was not of accepted type.")
+            exit()
+
+        except OSError:
+            print("Something went from reading the file...")
+            exit()
+
+        p = site_parser.Parser(soup, filepath)
         filename = p.create_dataset()["title"]
         data = p.create_dataset()
 

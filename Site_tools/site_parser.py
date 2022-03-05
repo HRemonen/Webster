@@ -1,30 +1,13 @@
-import tkinter as tk
-import os
 import validators
 from urllib.parse import urlparse
 
-from tkinter import filedialog
 
-from bs4 import BeautifulSoup
 
 class Parser:
-    def __init__(self):
-        self.root = tk.Tk()
-        self.root.withdraw()
-        self.initialdir = os.getcwd()+"/downloaded"
-
-        try:
-            self.filepath = filedialog.askopenfilename(initialdir=self.initialdir, title="Select files")
-            if not self.filepath.endswith(".html"):
-                raise TypeError
-            self.soup = BeautifulSoup(open(self.filepath, "r"), "html.parser")
-        except TypeError:
-            print("File was not of accepted type.")
-            exit()
-        except OSError:
-            print("Something went from reading the file...")
-            exit()
-
+    def __init__(self, soup, filepath):
+        self.soup = soup
+        self.filepath = filepath
+        
     def get_base_url(self):
         # read URL from the file downloaded
         with open(self.filepath, "r") as f:
