@@ -1,4 +1,3 @@
-from genericpath import isfile
 import os
 import requests
 
@@ -32,22 +31,20 @@ def download_site(site):
         filename += "html"
     else: filename += ".html"
 
-
-    # declare filepath 
-    FILEPATH = os.path.join(DOWNLOADED + foldername, filename)
-
+    #filepath, pretty explanatory I guess.. 
+    filepath = os.path.join(DL_DIR, filename)
 
     # save the file
     try:
-        if not os.path.isfile(FILEPATH):
+        if not os.path.isfile(filepath):
             # getting the request from url
             r = requests.get(site)
 
             # create new file and write the html content to it
-            with open(FILEPATH, 'w') as file:
+            with open(filepath, 'w') as file:
                 file.write(site+"\n\n")
                 file.write("File downloaded: ")
-                file.write(now.strftime("%d-%m-%Y, %H:%M:%S")+"\n\n")
+                file.write(NOW.strftime("%d-%m-%Y, %H:%M:%S")+"\n\n")
                 file.write(r.text)
                 print("File creation succesfull")
 
@@ -58,12 +55,15 @@ def download_site(site):
         print(msg)
 
 
-DOWNLOADED = "downloaded/"
-now = datetime.now()
-foldername = now.strftime("%m-%d-%Y")
+###########################--SETTINGS--###########################
+
+NOW = datetime.now()
+DL_DIR = "downloaded/" + NOW.strftime("%m-%d-%Y")
 
 # create folder for this date
-__create_project_dir(DOWNLOADED+foldername)
+__create_project_dir(DL_DIR)
+
+###########################-/SETTINGS/-###########################
 
 
 if __name__ == "__main__":

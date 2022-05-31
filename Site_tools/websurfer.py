@@ -75,6 +75,9 @@ class WebSurfer:
     def __autoDownloader(self):
         #Automatic downloader.
         #Downloads and parses every URL from queue if there is any.
+        #while self.queue.empty() is not True:
+
+
         pass
 
     def __downloadMenu(self):
@@ -132,11 +135,10 @@ class WebSurfer:
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 
-
-#You could start downloading all the associated URLs related to
-#the initial sites URL
-#for site in data["links"]:
-    #site_downloader.download_site(site)
+        #You could start downloading all the associated URLs related to
+        #the initial sites URL
+        #for site in data["URLs"]:
+            #site_downloader.download_site(site)
 
 
 if __name__ == "__main__":

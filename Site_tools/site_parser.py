@@ -1,8 +1,6 @@
 import validators
 from urllib.parse import urlparse
 
-
-
 class Parser:
     def __init__(self, soup, filepath):
         self.soup = soup
