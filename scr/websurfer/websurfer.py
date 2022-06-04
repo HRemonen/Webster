@@ -95,7 +95,7 @@ class WebSurfer:
         site_to_download = input("Enter site URL: ")
         print()
 
-        site_downloader.download_site(site_to_download)
+        site_downloader.Downloader(site_to_download)
 
     def __parseMenu(self):
         """

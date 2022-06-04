@@ -26,14 +26,12 @@ class Parser:
         Returns:
         List of URLs.
         """
-
         anchors = []
         urls = []
 
         # check base url from downloaded file.      
         base_url = self.get_base_url()
         
-
         # find every <a> tag from file, with href attribute.
         # store these anchors to a list
         for a in self.soup.find_all("a"):
