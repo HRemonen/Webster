@@ -173,6 +173,6 @@ class Interface(WebSurfer):
 
 if __name__ == "__main__":
     ws1 = Interface()
-    #ws1.run()
+    ws1.run()
     
-    ws2 = WebSurfer(mode="manual", autoQueue=True)
+    #ws2 = WebSurfer(mode="manual", autoQueue=True)
