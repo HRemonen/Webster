@@ -1,15 +1,17 @@
+import os
+
 import queue
 import json
-import os
 import tkinter as tk
 
 from tkinter import filedialog
 
-from utilities.util import validate_mode, validate_queue
-from downloader import Downloader
-from htmlparser import Parser
+from src.utils.loader import Downloader
+from src.utils.parser import Parser
+from src.utils.validators import validate_mode, validate_queue
 
-class WebSurfer:
+
+class Webster:
     """
     A class that represents WebSurfer module used to download and parse websites.
     Creates dataset of said websites. 
@@ -56,7 +58,7 @@ class WebSurfer:
         
     
 
-class Interface(WebSurfer):
+class Interface(Webster):
     def run(self):
         CHOICES = ["s", "a", "d", "p", "e"]
         print("""
@@ -182,6 +184,6 @@ class Interface(WebSurfer):
 
 
 if __name__ == "__main__":
-    #ws1 = Interface()
-    #ws1.run()
-    pass
+    ws1 = Interface("a")
+    ws1.run()
+    #ws1 = WebSurfer("https://google.com/")
