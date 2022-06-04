@@ -5,7 +5,7 @@ import tkinter as tk
 
 from tkinter import filedialog
 
-from utilities.util import validate_mode
+from utilities.util import validate_mode, validate_queue
 from downloader import Downloader
 from htmlparser import Parser
 
@@ -26,24 +26,34 @@ class WebSurfer:
         Queued items are waiting to be parsed.
         Default: False -> Does not add parsed URLs to the queue.
         Optional: True -> Automatically add parsed URLs to the queue, making the program run recursively.
-        
+    
     
     Methods
     -------
     None.
     
     """
-    def __init__(self, mode=None, autoQueue=False) -> None:
-        self.queue = queue.Queue()
+    def __init__(self, start: object,
+                 userQueue: object = None,
+                 mode: str = None, 
+                 autoQueue: bool = False
+        ) -> None:
         self.autoQueue = autoQueue
+        
+        if userQueue is not None:
+            self.queue = validate_queue(userQueue)
+        else: self.queue = queue.Queue(maxsize=0)
+        
+        if isinstance(start, str):
+            self.start = start
+        elif isinstance(start, list):
+            self.start = start[0]
+            [self.queue.put(url) for url in start[1:]]
         
         if mode is not None:
             self.mode = validate_mode(mode)
         else: self.mode = "auto"
         
-        
-        print(self.mode)
-        print(self.autoQueue)
     
 
 class Interface(WebSurfer):
@@ -172,7 +182,6 @@ class Interface(WebSurfer):
 
 
 if __name__ == "__main__":
-    ws1 = Interface()
-    ws1.run()
-    
-    #ws2 = WebSurfer(mode="manual", autoQueue=True)
+    #ws1 = Interface()
+    #ws1.run()
+    pass

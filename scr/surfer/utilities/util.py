@@ -1,4 +1,4 @@
-
+import queue
 
 def validate_mode(mode: str) -> str:
     """
@@ -24,3 +24,27 @@ def validate_mode(mode: str) -> str:
     if mode in valid_modes:
         return mode
     else: raise TypeError(f"mode type {mode} not understood")
+
+def validate_queue(userQueue: object) -> object:
+    """
+    Validates the passed queue
+    
+    Parameters
+    ----------
+    userQueue : object
+        Given queue. 
+
+    Raises
+    ------
+    TypeError
+        If queue is not a valid object.
+    
+    Returns
+    -------
+    object
+        queue provided as argument is returned as valid queue.
+        
+    """
+    if isinstance(userQueue, queue):
+        return userQueue
+    else: raise TypeError(f"mode type {userQueue} not understood")
