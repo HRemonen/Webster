@@ -5,16 +5,48 @@ import tkinter as tk
 
 from tkinter import filedialog
 
-from bs4 import BeautifulSoup
-
-from site_downloader import Downloader
-from site_parser import Parser
+from utilities.util import validate_mode
+from downloader import Downloader
+from htmlparser import Parser
 
 class WebSurfer:
-    def __init__(self) -> None:
+    """
+    A class that represents WebSurfer module used to download and parse websites.
+    Creates dataset of said websites. 
+    
+    Attributes
+    ----------
+    mode : (Optional) str, default = None.
+        Define used mode.
+        Default: "auto" -> Supports automation.
+        Optional: "manual" -> Manual mode is used with userinterface, does not support automation.
+    
+    autoQueue : (Optional) bool, default = False.
+        Define if parsed website URLs contribute to the queue automatically.
+        Queued items are waiting to be parsed.
+        Default: False -> Does not add parsed URLs to the queue.
+        Optional: True -> Automatically add parsed URLs to the queue, making the program run recursively.
+        
+    
+    Methods
+    -------
+    None.
+    
+    """
+    def __init__(self, mode=None, autoQueue=False) -> None:
         self.queue = queue.Queue()
-        self.autoQueue = False
+        self.autoQueue = autoQueue
+        
+        if mode is not None:
+            self.mode = validate_mode(mode)
+        else: self.mode = "auto"
+        
+        
+        print(self.mode)
+        print(self.autoQueue)
+    
 
+class Interface(WebSurfer):
     def run(self):
         CHOICES = ["s", "a", "d", "p", "e"]
         print("""
@@ -49,13 +81,12 @@ class WebSurfer:
             else:
                 print("Something went wrong.")
 
-
     def __settingsMenu(self):
         SETTINGS_CHOICES = ["c", "i", "b"]
 
-        #Implement queue for URLs.
-        #user could import queue from text file or
-        #user could also create queue from dataset urls.
+        #TODO:  Implement queue for URLs.
+        #       user could import queue from text file or
+        #       user could also create queue from dataset URLS.
          
         while True:
             settings_choices = f"""
@@ -71,14 +102,12 @@ class WebSurfer:
                 break
             elif c == "t":
                 self.autoQueue = not self.autoQueue
-
-        
+ 
     def __autoDownloader(self):
-        #Automatic downloader.
-        #Downloads and parses every URL from queue if there is any.
-        #while self.queue.empty() is not True:
-
-
+        #TODO:  Automatic downloader.
+        #       Downloads and parses every URL from queue if there is any.
+        #       while self.queue.empty() is not True:
+        
         pass
 
     def __downloadMenu(self):
@@ -113,13 +142,12 @@ class WebSurfer:
         
         root = tk.Tk()
         root.withdraw()
-        directory = os.getcwd()+"/downloaded"
+        directory = os.getcwd()+"/downloads"
 
         try:
             filepath = filedialog.askopenfilename(initialdir=directory, title="Select files")
             if not filepath.endswith(".html"):
                 raise TypeError
-            soup = BeautifulSoup(open(filepath, "r"), "html.parser")
 
         except TypeError:
             print("File was not of accepted type.")
@@ -130,19 +158,21 @@ class WebSurfer:
             exit()
 
         
-        data = Parser(soup, filepath).create_dataset()
+        data = Parser(filepath).create_dataset()
         filename = "downloads/scrapedata/" + data["title"]
         
-
+        #FIX: files not showing as json.
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 
-        #You could start downloading all the associated URLs related to
-        #the initial sites URL
-        #for site in data["URLs"]:
-            #site_downloader.download_site(site)
+        #TODO:  You could start downloading all the associated URLs related to
+        #       the initial sites URL
+        #       for site in data["URLs"]:
+        #           site_downloader.download_site(site)
 
 
 if __name__ == "__main__":
-    ws1 = WebSurfer()
-    ws1.run()
+    ws1 = Interface()
+    #ws1.run()
+    
+    ws2 = WebSurfer(mode="manual", autoQueue=True)

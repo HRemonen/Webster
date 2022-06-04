@@ -38,7 +38,7 @@ class Downloader:
         Information consists of site URL and date downloaded.
     
     """
-    def __init__(self, site: str):
+    def __init__(self, site: str) -> None:
         """
         Parameters
         ----------
@@ -106,7 +106,6 @@ class Downloader:
         except FileExistsError:
             msg = "File " + self.filename + " already exists."
             print(msg)
-
 
 if __name__ == "__main__":
     site="https://webscraper.io/test-sites"

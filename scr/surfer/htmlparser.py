@@ -1,5 +1,6 @@
 import validators
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 class Parser:
     """
@@ -11,8 +12,6 @@ class Parser:
     
     Attributes
     ----------
-    soup : object
-        Beatifulsoup instance
     filepath : str
         Filepath of the file user wants to parse data out of.
         User defines filepath with filedialog.
@@ -25,12 +24,22 @@ class Parser:
         other download information.
         
     parse_anchors()
+        Parses the downloaded html file for URL anchors leading to different 
+        sites or sub domains.  
     
     create_dataset()
+        Creates a dataset (dictionary) of chosen downloaded html file.
     
     """
-    def __init__(self, soup: object, filepath: str):
-        self.soup = soup
+    def __init__(self, filepath: str) -> None:
+        """
+        Parameters
+        ----------
+        filepath : str
+            Filepath of the file user wants to parse data out of.
+            User defines filepath with filedialog.      
+        """
+        self.soup = BeautifulSoup(open(filepath, "r"), "html.parser")
         self.filepath = filepath
         
     def get_base_url(self) -> str:
@@ -129,19 +138,35 @@ class Parser:
                     continue
                 urls.append(url)
         """
+        
         return urls
 
-
-    def create_dataset(self):
+    def create_dataset(self) -> dict:
         """
-        Creates dataset of chosen html file
-    
-        Parameters:
+        Creates a dataset (dictionary) of chosen downloaded html file.
+        
+        Parameters
+        ----------
+        None.
+        
+        Raises
+        ------
         None.
     
-        Returns:
-        Dictionary dataset.
+        Returns
+        -------
+        dict
+            a dictionary that resembles data gathered from the website.
+            data consist of:
+                Filepath
+                Website URL
+                Title
+                Keywords
+                Description
+                URLs
+    
         """
+        
         try:
             keywords = self.soup.find("meta", 
                 attrs={"name" : "keywords"}).get("content")
@@ -167,4 +192,3 @@ class Parser:
 
 if __name__ == "__main__":
     p = Parser()
-    print(p.create_dataset())
