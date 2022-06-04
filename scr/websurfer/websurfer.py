@@ -1,5 +1,3 @@
-import site_downloader
-import site_parser
 import queue
 import json
 import os
@@ -8,6 +6,9 @@ import tkinter as tk
 from tkinter import filedialog
 
 from bs4 import BeautifulSoup
+
+from site_downloader import Downloader
+from site_parser import Parser
 
 class WebSurfer:
     def __init__(self) -> None:
@@ -95,7 +96,7 @@ class WebSurfer:
         site_to_download = input("Enter site URL: ")
         print()
 
-        site_downloader.Downloader(site_to_download)
+        Downloader(site_to_download).download_website()
 
     def __parseMenu(self):
         """
@@ -128,9 +129,10 @@ class WebSurfer:
             print("Something went from reading the file...")
             exit()
 
-        p = site_parser.Parser(soup, filepath)
-        filename = "downloads/scrapedata/" + p.create_dataset()["title"]
-        data = p.create_dataset()
+        
+        data = Parser(soup, filepath).create_dataset()
+        filename = "downloads/scrapedata/" + data["title"]
+        
 
         with open(filename, 'w') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
