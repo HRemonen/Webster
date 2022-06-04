@@ -40,7 +40,7 @@ wheels/
 MANIFEST
 
 # Downloaded sites folder
-downloaded/
+downloads/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
