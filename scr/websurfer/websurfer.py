@@ -129,7 +129,7 @@ class WebSurfer:
             exit()
 
         p = site_parser.Parser(soup, filepath)
-        filename = p.create_dataset()["title"]
+        filename = "downloads/scrapedata/" + p.create_dataset()["title"]
         data = p.create_dataset()
 
         with open(filename, 'w') as f:

@@ -58,7 +58,7 @@ def download_site(site):
 ###########################--SETTINGS--###########################
 
 NOW = datetime.now()
-DL_DIR = "downloaded/" + NOW.strftime("%m-%d-%Y")
+DL_DIR = "downloads/html/" + NOW.strftime("%m-%d-%Y")
 
 # create folder for this date
 __create_project_dir(DL_DIR)
