@@ -3,7 +3,7 @@ import requests
 
 from datetime import datetime
 
-from webster.utils import validators
+from utils import validators
     
 ###########################--SETTINGS--###########################
 
@@ -55,11 +55,10 @@ class Downloader:
         
     def _get_http_request(self, site: str) -> object:
         try:
-            request = requests.get(site, timeout=0.1)
+            request = requests.get(site, timeout=1)
+            return request 
         except requests.RequestException:
             print("Something went wrong requesting page")
-        
-        return request    
 
     def download(self) -> None:
         """
@@ -77,12 +76,12 @@ class Downloader:
 
         #Try to save the file in DL_DIR folder
         try:       
-            if not os.path.isfile(self.filepath):
-                with open(self.filepath, 'w') as file:
+            if not os.path.isfile(self._filepath):
+                with open(self._filepath, 'w') as file:
                     file.write(self.site+"\n\n")
                     file.write("File downloaded: ")
                     file.write(NOW.strftime("%d-%m-%Y, %H:%M:%S")+"\n\n")
-                    file.write(r.text)
+                    file.write(self._request.text)
                     print("File creation succesfull")
 
             #If the file already exists, raise error

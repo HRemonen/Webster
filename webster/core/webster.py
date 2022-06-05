@@ -6,9 +6,9 @@ import tkinter as tk
 
 from tkinter import filedialog
 
-from webster.core.downloader import Downloader
-from webster.core.parser import Parser
-from webster.utils import validators
+from downloader import Downloader
+from parser import Parser
+from utils import validators
 
 class Webster:
     """
@@ -70,6 +70,8 @@ class Webster:
             raise RuntimeError("Already crawling!")
         self.crawling = True
         
+        
+            
        
             
         
@@ -205,6 +207,7 @@ class Interface(Webster):
 
 
 if __name__ == "__main__":
-    ws1 = Interface("https://google.com/")
-    ws1.run()
+    #ws1 = Interface("https://google.com/")
+    #ws1.run()
     #ws1 = WebSurfer("https://google.com/")
+    pass
