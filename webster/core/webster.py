@@ -6,67 +6,78 @@ import tkinter as tk
 
 from tkinter import filedialog
 
-from src.utils.loader import Downloader
-from src.utils.parser import Parser
-from src.utils import validators
-
+from webster.core.downloader import Downloader
+from webster.core.parser import Parser
+from webster.utils import validators
 
 class Webster:
     """
-    A class that represents WebSurfer module used to download and parse websites.
+    A class that represents Webster objec used to download and parse websites.
     Creates dataset of said websites. 
     
     Attributes
     ----------
-    start : str | list of strs
+    start_urls : str | list of strs
         Define starting URL or optionally give list of URLs. First URL in list is then defined
         as the starting point and the rest are stored in Queue.
         URLs must be in correct form: ex. https://example.com/ or https://www.example.com/
-        
+       
+    allowed_urls : (Optional) list, default = None.
+        Define allowed URLs to visit.  
+         
     mode : (Optional) str, default = auto.
         Define used mode.
         Default: "auto" -> Supports automation.
         Optional: "manual" -> Manual mode is used with userinterface, does not support automation.
-        
-    autoQueue : (Optional) bool, default = False.
-        Define if parsed website URLs contribute to the queue automatically.
-        Queued items are waiting to be parsed.
-        Default: False -> Does not add parsed URLs to the queue.
-        Optional: True -> Automatically add parsed URLs to the queue, making the program run recursively.
-    
     
     Methods
     -------
     None.
     
     """
+    
     def __init__(self, 
-                #name: str,
-                start: str,
+                start_urls: str,
+                allowed_urls: list = None,
                 mode: str = "auto",
-                autoQueue: bool = False,
-                #allowed: str = None,
-                #status: bool = True
         ) -> None:
-        
         self.queue = q.Queue(maxsize=0)
         
         if validators.ModeValidator(mode):
             self.mode = mode
         else: self.mode = "auto"           
         
-        if not isinstance(autoQueue, bool):
-            raise TypeError(f"mode type {autoQueue} not understood")
-        else: self.autoQueue = autoQueue
-        
-        if validators.URLValidator(start):
-            if isinstance(start, str):
-                self.start = start
-            elif isinstance(start, list):
-                self.start = start[0]
-                [self.queue.put(url) for url in start[1:]]
+        if validators.URLValidator(start_urls):
+            if isinstance(start_urls, str):
+                self.start_urls = start_urls
+            elif isinstance(start_urls, list):
+                self.start_urls = start_urls[0]
+                [self.queue.put(url) for url in start_urls[1:]]
         else: raise TypeError(f"URL(s) was not of accepted type")
+        
+        if allowed_urls is not None:
+            if validators.URLValidator(allowed_urls):
+                self.allowed_urls = allowed_urls
+            else: raise RuntimeError(f"URL(s) was not of accepted type")
     
+        self.spider = None
+        self.parser = None
+        self.crawling = False
+
+        
+    def crawl(self) -> None:
+        if self.crawling:
+            raise RuntimeError("Already crawling!")
+        self.crawling = True
+        
+       
+            
+        
+                   
+        
+        
+        
+
 
 class Interface(Webster):
     def run(self):
