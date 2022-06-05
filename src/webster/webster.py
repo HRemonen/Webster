@@ -1,6 +1,6 @@
 import os
 
-import queue
+import queue as q
 import json
 import tkinter as tk
 
@@ -8,7 +8,7 @@ from tkinter import filedialog
 
 from src.utils.loader import Downloader
 from src.utils.parser import Parser
-from src.utils.validators import validate_mode, validate_queue
+from src.utils import validators
 
 
 class Webster:
@@ -18,11 +18,16 @@ class Webster:
     
     Attributes
     ----------
-    mode : (Optional) str, default = None.
+    start : str | list of strs
+        Define starting URL or optionally give list of URLs. First URL in list is then defined
+        as the starting point and the rest are stored in Queue.
+        URLs must be in correct form: ex. https://example.com/ or https://www.example.com/
+        
+    mode : (Optional) str, default = auto.
         Define used mode.
         Default: "auto" -> Supports automation.
         Optional: "manual" -> Manual mode is used with userinterface, does not support automation.
-    
+        
     autoQueue : (Optional) bool, default = False.
         Define if parsed website URLs contribute to the queue automatically.
         Queued items are waiting to be parsed.
@@ -35,27 +40,32 @@ class Webster:
     None.
     
     """
-    def __init__(self, start: object,
-                 userQueue: object = None,
-                 mode: str = None, 
-                 autoQueue: bool = False
+    def __init__(self, 
+                 #name: str,
+                 start: str,
+                 mode: str = "auto",
+                 autoQueue: bool = False,
+                 #allowed: str = None,
+                #status: bool = True
         ) -> None:
-        self.autoQueue = autoQueue
         
-        if userQueue is not None:
-            self.queue = validate_queue(userQueue)
-        else: self.queue = queue.Queue(maxsize=0)
+        self.queue = q.Queue(maxsize=0)
         
-        if isinstance(start, str):
-            self.start = start
-        elif isinstance(start, list):
-            self.start = start[0]
-            [self.queue.put(url) for url in start[1:]]
+        if validators.ModeValidator(mode):
+            self.mode = mode
+        else: self.mode = "auto"           
         
-        if mode is not None:
-            self.mode = validate_mode(mode)
-        else: self.mode = "auto"
+        if not isinstance(autoQueue, bool):
+            raise TypeError(f"mode type {autoQueue} not understood")
+        else: self.autoQueue = autoQueue
         
+        if validators.URLValidator(start):
+            if isinstance(start, str):
+                self.start = start
+            elif isinstance(start, list):
+                self.start = start[0]
+                [self.queue.put(url) for url in start[1:]]
+        else: raise TypeError(f"URL(s) was not of accepted type")
     
 
 class Interface(Webster):
@@ -184,6 +194,6 @@ class Interface(Webster):
 
 
 if __name__ == "__main__":
-    ws1 = Interface("a")
+    ws1 = Interface("https://google.com/")
     ws1.run()
     #ws1 = WebSurfer("https://google.com/")

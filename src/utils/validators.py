@@ -1,6 +1,7 @@
+import re
 import queue
 
-def validate_mode(mode: str) -> str:
+def ModeValidator(mode: str) -> bool:
     """
     Validates the passed mode type
     
@@ -16,35 +17,53 @@ def validate_mode(mode: str) -> str:
     
     Returns
     -------
-    string
-        mode provided as argument is returned as valid mode.
+    boolean
+        True if mode of accepted type.
         
     """
-    valid_modes = ["manual"]
+    
+    valid_modes = ["auto", "manual"]
+    
     if mode in valid_modes:
-        return mode
+        return True
     else: raise TypeError(f"mode type {mode} not understood")
 
-def validate_queue(userQueue: object) -> object:
+
+def URLValidator(url: str) -> bool:
     """
-    Validates the passed queue
+    Validates the URL or list of URLs
     
     Parameters
     ----------
-    userQueue : object
-        Given queue. 
+    url : str | list
+        Given URL or list of URLs
 
     Raises
     ------
     TypeError
-        If queue is not a valid object.
+        If URL is not of accepted form, nor not an valid URL.
     
     Returns
     -------
     object
-        queue provided as argument is returned as valid queue.
-        
+        True if URL of accepted form.
     """
-    if isinstance(userQueue, queue):
-        return userQueue
-    else: raise TypeError(f"mode type {userQueue} not understood")
+    def _validate(input: str) -> bool:
+        return bool(re.match(
+            r"(https?|ftp)://"          # protocol
+            r"(\w+(\-\w+)*\.)?"         # host (optional)
+            r"((\w+(\-\w+)*)\.(\w+))"   # domain
+            r"(\.\w+)*"                 # top-level domain (optional, can have > 1)
+            r"([\w\-\._\~/]*)*(?<!\.)"  # path, params, anchors, etc. (optional)
+        , input))
+        
+    if not isinstance(url, str):
+        if not isinstance(url, list):
+            raise TypeError(f"URL {url} not understood")
+        else: 
+            return all([_validate(x) for x in url])           
+    else: return _validate(url)
+    
+    
+if __name__ == "__main__":
+    pass
