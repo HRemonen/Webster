@@ -1,52 +1,74 @@
-import queue
-import json
 import os
+
+import queue as q
+import json
 import tkinter as tk
 
 from tkinter import filedialog
 
-from utilities.util import validate_mode
-from downloader import Downloader
-from htmlparser import Parser
+from src.utils.loader import Downloader
+from src.utils.parser import Parser
+from src.utils import validators
 
-class WebSurfer:
+
+class Webster:
     """
     A class that represents WebSurfer module used to download and parse websites.
     Creates dataset of said websites. 
     
     Attributes
     ----------
-    mode : (Optional) str, default = None.
+    start : str | list of strs
+        Define starting URL or optionally give list of URLs. First URL in list is then defined
+        as the starting point and the rest are stored in Queue.
+        URLs must be in correct form: ex. https://example.com/ or https://www.example.com/
+        
+    mode : (Optional) str, default = auto.
         Define used mode.
         Default: "auto" -> Supports automation.
         Optional: "manual" -> Manual mode is used with userinterface, does not support automation.
-    
+        
     autoQueue : (Optional) bool, default = False.
         Define if parsed website URLs contribute to the queue automatically.
         Queued items are waiting to be parsed.
         Default: False -> Does not add parsed URLs to the queue.
         Optional: True -> Automatically add parsed URLs to the queue, making the program run recursively.
-        
+    
     
     Methods
     -------
     None.
     
     """
-    def __init__(self, mode=None, autoQueue=False) -> None:
-        self.queue = queue.Queue()
-        self.autoQueue = autoQueue
+    def __init__(self, 
+                #name: str,
+                start: str,
+                mode: str = "auto",
+                autoQueue: bool = False,
+                #allowed: str = None,
+                #status: bool = True
+        ) -> None:
         
-        if mode is not None:
-            self.mode = validate_mode(mode)
-        else: self.mode = "auto"
+        self.queue = q.Queue(maxsize=0)
         
+        if validators.ModeValidator(mode):
+            self.mode = mode
+        else: self.mode = "auto"           
         
-        print(self.mode)
-        print(self.autoQueue)
+        if not isinstance(autoQueue, bool):
+            raise TypeError(f"mode type {autoQueue} not understood")
+        else: self.autoQueue = autoQueue
+        
+        if validators.URLValidator(start):
+            if isinstance(start, str):
+                self.start = start
+            elif isinstance(start, list):
+                self.start = start[0]
+                [self.queue.put(url) for url in start[1:]]
+        else: raise TypeError(f"URL(s) was not of accepted type")
     
 
-class Interface(WebSurfer):
+class Interface(Webster):
     def run(self):
         CHOICES = ["s", "a", "d", "p", "e"]
         print("""
@@ -172,7 +194,6 @@ class Interface(WebSurfer):
 
 
 if __name__ == "__main__":
-    ws1 = Interface()
+    ws1 = Interface("https://google.com/")
     ws1.run()
-    
-    #ws2 = WebSurfer(mode="manual", autoQueue=True)
+    #ws1 = WebSurfer("https://google.com/")
