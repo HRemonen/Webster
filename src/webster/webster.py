@@ -41,11 +41,11 @@ class Webster:
     
     """
     def __init__(self, 
-                 #name: str,
-                 start: str,
-                 mode: str = "auto",
-                 autoQueue: bool = False,
-                 #allowed: str = None,
+                #name: str,
+                start: str,
+                mode: str = "auto",
+                autoQueue: bool = False,
+                #allowed: str = None,
                 #status: bool = True
         ) -> None:
         
