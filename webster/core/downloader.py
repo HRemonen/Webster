@@ -1,14 +1,11 @@
 import os
-import requests
 
 from datetime import datetime
-
-from utils import validators
     
 ###########################--SETTINGS--###########################
 
 NOW = datetime.now()
-DL_DIR = "downloads/html/" + NOW.strftime("%m-%d-%Y")
+DL_DIR = "downloads/html/"
 
 #Create downloads folder with todays date (check from above).
 #Folder is then used (Parser module) to store downloaded html and data (JSON) files.
@@ -18,83 +15,61 @@ DL_DIR = "downloads/html/" + NOW.strftime("%m-%d-%Y")
 class Downloader:
     """
     A class that represents Downloader module used to download 
-    webpages and saving said webpages in html format.
+    webpages and saving webpages in html format.
     
     Attributes
     ----------
-    site : str
-        a string of site URL. URL must be in form of https://example.com/.
-        Without the URL scheme Downloader is not able to recognise the URL.
+    response : request.Response object
+        response object
+    filename : str
+        filename for the file
     
     Methods
     -------
-    download_website()
-        Downloads site content and saves the content as html file.
-        Writes information about the download to the first rows of file.
-        Information consists of site URL and date downloaded.
-    
+    download()
+        Downloads site content and saves the content as html file.  
     """
-    def __init__(self, site: str) -> None:
-        if validators.URLValidator(site):
-            self.site = site
-            self.filename = self.site.replace("/", "")
+    def __init__(self, response: object, filename: str) -> None:
         try:
             os.makedirs(DL_DIR)
         except FileExistsError:
             pass
         
-        #Check if filename has "." as last char.
-        #If the last character was a "." add "html" filetype extension to the filename
-        if self.filename[-1] == ".":
-            self.filename += "html"
-        #Else add ".html" extension to the filename, making it a html file.
-        else: self.filename += ".html"
+        self._response = response
+        self._filename = filename
+        self._filepath = os.path.join(DL_DIR, self._filename)
+    
+    def __str__(self):
+        return self._filename
         
-        self._filepath = os.path.join(DL_DIR, self.filename)
-        self._request = self._get_http_request(self.site)
+    __repr__= __str__
         
-    def _get_http_request(self, site: str) -> object:
-        try:
-            request = requests.get(site, timeout=1)
-            return request 
-        except requests.RequestException:
-            print("Something went wrong requesting page")
-
     def download(self) -> None:
         """
         Downloads site content and saves the content as html file.
-        Writes information about the download to the first rows of file.
-        Information consists of site URL and date downloaded.
         
         Raises
         ------
         FileExistsError
-            If the website already has been downloaded and saved on this date
-            raise error and print out error message.
-    
+            If the website already has been downloaded and saved.
         """
 
         #Try to save the file in DL_DIR folder
         try:       
             if not os.path.isfile(self._filepath):
                 with open(self._filepath, 'w') as file:
-                    file.write(self.site+"\n\n")
+                    file.write(self._response.url+"\n\n")
                     file.write("File downloaded: ")
                     file.write(NOW.strftime("%d-%m-%Y, %H:%M:%S")+"\n\n")
-                    file.write(self._request.text)
-                    print("File creation succesfull")
+                    file.write(self._response.text)
 
             #If the file already exists, raise error
             else: raise FileExistsError
-
         except FileExistsError:
-            print("File " + self.filename + " already exists.")
-            
-
+            print("File exists already...")
+        
 if __name__ == "__main__":
-    s="https://webscraper.io/test-sites"
+    pass
 
     
-    d = Downloader(s)
-    d.download()
     

@@ -6,14 +6,14 @@ import tkinter as tk
 
 from tkinter import filedialog
 
-from downloader import Downloader
-from parser import Parser
 from utils import validators
+from utils import request_response
+from core.parser import Parser
+from core.downloader import Downloader
 
-class Webster:
+class Crawler:
     """
-    A class that represents Webster objec used to download and parse websites.
-    Creates dataset of said websites. 
+    A class that represents crawler object used to crawl websites.
     
     Attributes
     ----------
@@ -51,8 +51,7 @@ class Webster:
             if isinstance(start_urls, str):
                 self.start_urls = start_urls
             elif isinstance(start_urls, list):
-                self.start_urls = start_urls[0]
-                [self.queue.put(url) for url in start_urls[1:]]
+                [self.queue.put(url) for url in start_urls]
         else: raise TypeError(f"URL(s) was not of accepted type")
         
         if allowed_urls is not None:
@@ -63,25 +62,30 @@ class Webster:
         self.spider = None
         self.parser = None
         self.crawling = False
-
         
     def crawl(self) -> None:
         if self.crawling:
             raise RuntimeError("Already crawling!")
         self.crawling = True
         
-        
+        while self.crawling:
+            try:
+                if self.queue.empty():
+                    raise RuntimeError("Nothing to crawl...")
+                
+                URL = self.queue.get()
+                http_response = request_response.get_http_response(URL)
+                
+                print("Downloading", http_response)
+                http_response.download()
+                
+            except Exception:
+                self.crawling = False
             
-       
             
-        
-                   
-        
-        
         
 
-
-class Interface(Webster):
+class Interface(Crawler):
     def run(self):
         CHOICES = ["s", "a", "d", "p", "e"]
         print("""
@@ -210,4 +214,7 @@ if __name__ == "__main__":
     #ws1 = Interface("https://google.com/")
     #ws1.run()
     #ws1 = WebSurfer("https://google.com/")
-    pass
+    sites = ["https://google.com/", 
+            "https://github.com/", 
+            "https://youtube.com/"]
+    ws = Crawler(sites).crawl()
