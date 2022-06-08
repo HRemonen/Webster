@@ -1,94 +1,85 @@
-import validators
+import requests
+
+from utils import validators
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
 class Parser:
     """
     A class that represents Parser module used to parse 
-    downloaded webpages (html files). Proceeds to create a dataset
-    of said parse data.
-    Module consists of different class methods used to accomplish this.
-    
+    downloaded webpages (html or response objects files). 
     
     Attributes
     ----------
-    filepath : str
+    filepath : (Optional) str
         Filepath of the file user wants to parse data out of.
         User defines filepath with filedialog.
     
     Methods
     -------
     get_base_url()
-        "Import" websites base URL (URL netloc) from the downloaded file.
-        Downloaded files have the URL written on the first rows, along with
-        other download information.
+        Get websites base URL (URL netloc) from the downloaded file.
         
     parse_anchors()
-        Parses the downloaded html file for URL anchors leading to different 
-        sites or sub domains.  
+        Parses the downloaded html file for anchors. 
     
     create_dataset()
-        Creates a dataset (dictionary) of chosen downloaded html file.
+        Creates a dataset (dictionary) of html file.
     
     """
-    def __init__(self, filepath: str) -> None:
+    def __init__(self, filepath: str = None, response: object = None) -> None:
         """
         Parameters
         ----------
-        filepath : str
-            Filepath of the file user wants to parse data out of.
-            User defines filepath with filedialog.      
+        filepath : (Optional) str
+            Filepath of the file to parse data out of. 
+        response : (Optional) object
+            Response object of the URL to parse data out of.   
         """
-        self.soup = BeautifulSoup(open(filepath, "r"), "html.parser")
         self.filepath = filepath
+        self.response = response
+        self.soup = None
+        
+        if filepath is not None:
+            self.filepath = filepath
+            self.soup = BeautifulSoup(open(filepath, "r"), "html.parser")
+        
+        if response is not None:
+            if response is not isinstance(response, requests.Response):
+                raise TypeError("Response object was not of accepted type")
+            else: self.response = response
+            
         
     def get_base_url(self) -> str:
         """
-        "Import" websites base URL (URL netloc) from the downloaded file.
-        Downloaded files have the URL written on the first rows, along with
-        other download information.
-    
-        Parameters
-        ----------
-        None.
-        
-        Raises
-        ------
-        None.
-    
+        Get websites base URL (URL netloc) from the downloaded file.
+
         Returns
         -------
         string
             Base URL (<scheme>://<netloc>/)
-        
-        Clarification:
-        scheme: The protocol name, usually http(s)://
-        netloc: Contains the network location. Includes the domain itself and
-        the port number
     
         """
-        #read site URL from the file downloaded.
-        with open(self.filepath, "r") as f:
-            base_url = urlparse(f.readline().strip())
+        if self.response is not None:
+            response_url = self.response.url
+    
+        else:
+            if self.filepath is not None:
+                #read site URL from the file downloaded.
+                with open(self.filepath, "r") as f:
+                    response_url = urlparse(f.readline().strip())
+            else: 
+                raise RuntimeError("Nothing to get base URL from! Please provide needed parameters or class attributes.")
         
         #Get the "base URL" for the relative URLs to work correctly
         #Base URL consist of URL scheme and netloc basically, ignore anything else.
-        result = '{uri.scheme}://{uri.netloc}/'.format(uri=base_url)
+        base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=response_url)
         
-        return result
+        return base_url
 
     def parse_anchors(self) -> list:
         """
-        Parses the downloaded html file for URL anchors leading to different 
-        sites or sub domains.   
-        
-        Parameters
-        ----------
-        None.
-        
-        Raises
-        ------
-        None.
+        Parses anchors from the file / response object and return anchor list.  
     
         Returns
         -------
@@ -97,47 +88,27 @@ class Parser:
     
         """
         
-        urls = []
-
-        # check base url from downloaded file.      
+        urls = []    
         base_url = self.get_base_url()
         
         # find every <a> tag from file, with href attribute.
-        # store these anchors to a list
         for a in self.soup.find_all("a"):
             anchor = a.attrs['href'] if "href" in a.attrs else ''
-            
             #if anchor start with / it means it is relative path or sub domain
             if anchor.startswith("/"):
                 #strip the first / from the URL to prevent "//" that would crash program
                 """
                 anchors.append(anchor[1:])
                 """
-                #combine base URL and anchor to make legit URL
                 
-                ######would there be a better way of doing this and possibly saving
-                ######resources?
                 url = base_url + anchor[1:]
                 if url in urls:
                     continue
                 urls.append(url)
 
             #if anchor is URL istead of relative path add it to the urls list.
-            elif validators.url(anchor):
- 
+            elif validators.URLValidator(anchor):
                 urls.append(anchor)
-                
-        """ Replaced in version 0.2 to save resources, maybe dont delete yet.
-        # if the file had any anchors, combine these 
-        # directories with base url.
-        
-        if anchors:
-            for a in anchors:
-                url = base_url + a
-                if url in urls:
-                    continue
-                urls.append(url)
-        """
         
         return urls
 
@@ -191,4 +162,7 @@ class Parser:
         return dataset
 
 if __name__ == "__main__":
-    p = Parser()
+    filepath = "downloads/html/github.comHRemonenPython-Websurfer.html"
+    p = Parser(filepath=filepath)
+    print(p.get_base_url())
+    print(p.parse_anchors())

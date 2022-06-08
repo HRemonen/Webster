@@ -59,7 +59,7 @@ def URLValidator(url: str) -> bool:
         
     if not isinstance(url, str):
         if not isinstance(url, list):
-            raise TypeError(f"URL {url} not understood")
+            raise TypeError(f"URL(s) was not of accepted type")
         else: 
             return all([_validate(x) for x in url])           
     else: return _validate(url)
