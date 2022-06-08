@@ -1,25 +1,31 @@
-import os
+"""
+Helper file for networking related stuff
+
+"""
 
 import requests
+
+from fileinput import filename
+
 from utils import validators
 from core.downloader import Downloader
 
 def get_http_response(url: str) -> requests.Response:
+    """
+    Return http response using requests package
+    """
     if not validators.URLValidator(url):
         raise TypeError(f"URL(s) was not of accepted type")
     try:
-        response = requests.get(url, timeout=1)
+        response = requests.get(url, timeout=2)
     except requests.RequestException:
         print("Something went wrong requesting page")
         
-    filename = response.url.split("//")[1].replace("/", "") + ".html"    
-    return Downloader(response, filename)
+    return response
 
-        
-        
 if __name__ == "__main__":
     s="https://webscraper.io/test-sites"
-
+    response, filename = get_http_response(s)
     
-    d = get_http_response(s)
-    d.download()     
+    d = Downloader(response).download()
+         

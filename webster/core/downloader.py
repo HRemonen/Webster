@@ -1,4 +1,5 @@
 import os
+import requests
 
 from datetime import datetime
     
@@ -17,27 +18,34 @@ class Downloader:
     A class that represents Downloader module used to download 
     webpages and saving webpages in html format.
     
-    Attributes
-    ----------
-    response : request.Response object
-        response object
-    filename : str
-        filename for the file
-    
     Methods
     -------
     download()
         Downloads site content and saves the content as html file.  
     """
-    def __init__(self, response: object, filename: str) -> None:
+    def __init__(self) -> None:
         try:
             os.makedirs(DL_DIR)
         except FileExistsError:
             pass
         
+        self._response = None
+        self._filename = None
+        self._filepath = None
+        
+    def give_response(self, response: requests.Response):
         self._response = response
-        self._filename = filename
-        self._filepath = os.path.join(DL_DIR, self._filename)
+        self._filename = response.url.split("//")[1].replace("/", "") + ".html"   
+        self._filepath = os.path.join(DL_DIR, self._filename) 
+              
+    def get_downloader_response(self):
+        return self._response
+    
+    def get_filename(self):
+        return self._filename
+    
+    def get_filepath(self):
+        return self._filepath
     
     def __str__(self):
         return self._filename

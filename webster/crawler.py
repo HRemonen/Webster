@@ -1,13 +1,9 @@
-import os
+import uuid
 
 import queue as q
-import json
-import tkinter as tk
-
-from tkinter import filedialog
 
 from utils import validators
-from utils import request_response
+from utils import networking
 from core.parser import Parser
 from core.downloader import Downloader
 
@@ -26,13 +22,17 @@ class Crawler:
         Define allowed URLs to visit.  
          
     mode : (Optional) str, default = auto.
+        Caution:
+            NotImplemented
         Define used mode.
         Default: "auto" -> Supports automation.
-        Optional: "manual" -> Manual mode is used with userinterface, does not support automation.
+        
     
     Methods
     -------
-    None.
+    crawl()
+        Starts crawler with given starting points. Crawls until there is no more websites found.
+        Downloads every crawled website.
     
     """
     
@@ -42,6 +42,7 @@ class Crawler:
                 mode: str = "auto",
         ) -> None:
         self.queue = q.Queue(maxsize=0)
+        self._ID = uuid.uuid1()
         
         if validators.ModeValidator(mode):
             self.mode = mode
@@ -59,162 +60,48 @@ class Crawler:
                 self.allowed_urls = allowed_urls
             else: raise RuntimeError(f"URL(s) was not of accepted type")
     
-        self.spider = None
+        self.downloader = Downloader()
         self.parser = None
         self.crawling = False
-        
+    
+    def __str__(self):
+        return f"Crawler: ", self._ID
+     
     def crawl(self) -> None:
         if self.crawling:
             raise RuntimeError("Already crawling!")
         self.crawling = True
+        print("Starting to crawl...")
         
         while self.crawling:
             try:
                 if self.queue.empty():
                     raise RuntimeError("Nothing to crawl...")
-                
-                URL = self.queue.get()
-                http_response = request_response.get_http_response(URL)
-                
-                print("Downloading", http_response)
-                http_response.download()
-                
             except Exception:
                 self.crawling = False
-            
-            
-        
-
-class Interface(Crawler):
-    def run(self):
-        CHOICES = ["s", "a", "d", "p", "e"]
-        print("""
-        Welcome to WebSurfer!
-        What would you like to do?
-        """)
-
-        while True:
-            print("Main menu.")
-            print(f"""
-            Choices:
-            (s)ettings..............
-            (a)uto downloader.......(auto)
-            (d)ownload site.........(manual)
-            (p)arse site............(manual)
-            (e)xit..................
-            """)
-
-            c = input("Enter choice: ").lower()
-            if c == "e":
                 break
-            elif c not in CHOICES:
-                print("Incorrect choice, try again")
-            elif c == "s":
-                self.__settingsMenu()
-            elif c == "a":
-                self.__autoDownloader()
-            elif c == "d":
-                self.__downloadMenu()           
-            elif c == "p":
-                self.__parseMenu()             
-            else:
-                print("Something went wrong.")
-
-    def __settingsMenu(self):
-        SETTINGS_CHOICES = ["c", "i", "b"]
-
-        #TODO:  Implement queue for URLs.
-        #       user could import queue from text file or
-        #       user could also create queue from dataset URLS.
-         
-        while True:
-            settings_choices = f"""
-            (i)mport URLs from text file to queue
-            (t)oggle autodownloader auto queue      {self.autoQueue}
-            (b)ack
-            """
-            print("Settings menu.")
-            print(settings_choices)
-
-            c = input("Enter choice: ").lower()
-            if c == "b":
-                break
-            elif c == "t":
-                self.autoQueue = not self.autoQueue
- 
-    def __autoDownloader(self):
-        #TODO:  Automatic downloader.
-        #       Downloads and parses every URL from queue if there is any.
-        #       while self.queue.empty() is not True:
+                
+            #get next free URL from queue
+            URL_to_download = self.queue.get()
+            response = networking.get_http_response(URL_to_download)
+            self.downloader.give_response(response)
+                
+            filepath = self.downloader.get_filepath()
+            print(filepath)
+            filename = self.downloader.get_filename()
+                
+            #print("Downloading...", filename)
+            self.downloader.download()
         
-        pass
-
-    def __downloadMenu(self):
-        """
-        Download manually selected site address ex. "https://ocw.mit.edu/".
-    
-        Parameters:
-        None.
-    
-        Returns:
-        HTML file.
-        """
-
-        print("Download menu.")
-        site_to_download = input("Enter site URL: ")
-        print()
-
-        Downloader(site_to_download).download_website()
-
-    def __parseMenu(self):
-        """
-        Parse manually selected html file.
-    
-        Parameters:
-        None.
-    
-        Returns:
-        JSON dataset from the site.
-        """
-
-        print("Parse menu.")
-        
-        root = tk.Tk()
-        root.withdraw()
-        directory = os.getcwd()+"/downloads"
-
-        try:
-            filepath = filedialog.askopenfilename(initialdir=directory, title="Select files")
-            if not filepath.endswith(".html"):
-                raise TypeError
-
-        except TypeError:
-            print("File was not of accepted type.")
-            exit()
-
-        except OSError:
-            print("Something went from reading the file...")
-            exit()
-
-        
-        data = Parser(filepath).create_dataset()
-        filename = "downloads/scrapedata/" + data["title"]
-        
-        #FIX: files not showing as json.
-        with open(filename, 'w') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-
-        #TODO:  You could start downloading all the associated URLs related to
-        #       the initial sites URL
-        #       for site in data["URLs"]:
-        #           site_downloader.download_site(site)
-
+        if self.crawling is False:
+            print("Stopping to crawl... Please wait.")
 
 if __name__ == "__main__":
     #ws1 = Interface("https://google.com/")
     #ws1.run()
     #ws1 = WebSurfer("https://google.com/")
-    sites = ["https://google.com/", 
-            "https://github.com/", 
-            "https://youtube.com/"]
-    ws = Crawler(sites).crawl()
+    test_sites = ["https://www.w3schools.com/", 
+            "https://www.github.com/", 
+            "https://www.youtube.com/",
+            "https://github.com/HRemonen/Python-Websurfer"]
+    ws = Crawler(test_sites).crawl()

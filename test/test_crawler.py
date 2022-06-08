@@ -12,17 +12,17 @@ PARAM21BAD = ["google.com/",
             "https://youtube./"]
 
 
-class TestWebster(unittest.TestCase):
+class TestCrawler(unittest.TestCase):
     #Test class init with valid parameters
     def testInitOK(self):
         ws1 = Crawler(PARAM2)
         
-        self.assertEqual(ws1.start_urls, PARAM2), "Starting website not correct"
-        self.assertEqual(ws1.queue.qsize(), 0), "queue size not matching should be 0 when only one URL is provided"
-        self.assertEqual(ws1.mode, "auto"), "mode not correct, should be auto by default"           
+        self.assertEqual(ws1.start_urls, PARAM2),
+        self.assertEqual(ws1.queue.qsize(), 0)
+        self.assertEqual(ws1.mode, "auto")     
         
         ws2 = Crawler(PARAM2, mode="manual")
-        self.assertEqual(ws2.mode, "manual"), "mode not correct, should be manual but now it is auto"
+        self.assertEqual(ws2.mode, "manual")
     
     #Test class init with bad mode
     def testInitBadMode(self):
@@ -31,11 +31,10 @@ class TestWebster(unittest.TestCase):
     
     #Test class init start URLs working correctly
     def testInitURLValidity(self):
-        ws1 = Crawler(PARAM21)
+        ws1 = Crawler(PARAM2)
         ws2 = Crawler(PARAM2, allowed_urls=PARAM21)
         
-        self.assertEqual(ws1.start_urls, PARAM21[0])
-        self.assertEqual(ws1.queue.qsize(), len(PARAM21)-1)
+        self.assertEqual(ws1.start_urls, PARAM2)
         
         self.assertEqual(ws2.start_urls, PARAM2)
     
