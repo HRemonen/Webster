@@ -29,7 +29,7 @@ def ModeValidator(mode: str) -> bool:
     else: raise TypeError(f"mode type {mode} not understood")
 
 
-def URLValidator(url: str) -> bool:
+def URLValidator(url: list) -> bool:
     """
     Validates the URL or list of URLs
     
@@ -57,12 +57,12 @@ def URLValidator(url: str) -> bool:
             r"([\w\-\._\~/]*)*(?<!\.)"  # path, params, anchors, etc. (optional)
         , input))
         
-    if not isinstance(url, str):
-        if not isinstance(url, list):
-            raise TypeError(f"URL(s) was not of accepted type")
-        else: 
-            return all([_validate(x) for x in url])           
-    else: return _validate(url)
+    
+    if not isinstance(url, list):
+        raise TypeError(f"URL(s) was not of accepted type")
+    else: 
+        return all([_validate(x) for x in url])           
+    
     
     
 if __name__ == "__main__":

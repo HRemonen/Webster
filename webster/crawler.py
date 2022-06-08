@@ -1,3 +1,4 @@
+from tracemalloc import start
 import uuid
 
 import queue as q
@@ -13,8 +14,8 @@ class Crawler:
     
     Attributes
     ----------
-    start_urls : str | list of strs
-        Define starting URL or optionally give list of URLs. First URL in list is then defined
+    start_urls : list
+        Define starting URLs as a list. First URL in list is then defined
         as the starting point and the rest are stored in Queue.
         URLs must be in correct form: ex. https://example.com/ or https://www.example.com/
        
@@ -37,28 +38,26 @@ class Crawler:
     """
     
     def __init__(self, 
-                start_urls: str,
+                start_urls: list,
                 allowed_urls: list = None,
-                mode: str = "auto",
+                mode: str = None,
         ) -> None:
         self.queue = q.Queue(maxsize=0)
         self._ID = uuid.uuid1()
         
-        if validators.ModeValidator(mode):
-            self.mode = mode
+        if mode is not None:
+            if validators.ModeValidator(mode):
+                self.mode = mode
         else: self.mode = "auto"           
         
         if validators.URLValidator(start_urls):
-            if isinstance(start_urls, str):
-                self.start_urls = start_urls
-            elif isinstance(start_urls, list):
-                [self.queue.put(url) for url in start_urls]
+            [self.queue.put(url) for url in start_urls]
         else: raise TypeError(f"URL(s) was not of accepted type")
         
         if allowed_urls is not None:
             if validators.URLValidator(allowed_urls):
                 self.allowed_urls = allowed_urls
-            else: raise RuntimeError(f"URL(s) was not of accepted type")
+            else: raise TypeError(f"URL(s) was not of accepted type")
     
         self.downloader = Downloader()
         self.parser = None
@@ -104,4 +103,5 @@ if __name__ == "__main__":
             "https://www.github.com/", 
             "https://www.youtube.com/",
             "https://github.com/HRemonen/Python-Websurfer"]
+    
     ws = Crawler(test_sites).crawl()
