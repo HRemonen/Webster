@@ -1,10 +1,9 @@
-from tracemalloc import start
 import uuid
 
 import queue as q
 
 from utils import validators
-from utils import networking
+from utils import http_response
 from core.parser import Parser
 from core.downloader import Downloader
 
@@ -78,7 +77,7 @@ class Crawler:
                 
             #get next free URL from queue
             URL_to_download = self.queue.get()
-            response = networking.get_http_response(URL_to_download)
+            response = http_response.http_response(URL_to_download)
             self.downloader.give_response(response)
                 
             filepath = self.downloader.get_filepath()
