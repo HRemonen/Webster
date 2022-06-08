@@ -12,7 +12,6 @@ DL_DIR = "downloads/html/"
 #Folder is then used (Parser module) to store downloaded html and data (JSON) files.
 
 ###########################-/SETTINGS/-###########################
-
 class Downloader:
     """
     A class that represents Downloader module used to download 
@@ -34,9 +33,15 @@ class Downloader:
         self._filepath = None
         
     def give_response(self, response: requests.Response):
+        """
+        Give response object to Downloader module.
+        Do this before using download() method.
+        """
+        if not isinstance(response, requests.Response):
+            raise TypeError("Response object was not of accepted type")
         self._response = response
         self._filename = response.url.split("//")[1].replace("/", "") + ".html"   
-        self._filepath = os.path.join(DL_DIR, self._filename) 
+        self._filepath = os.path.join(DL_DIR, self._filename)
               
     def get_downloader_response(self):
         return self._response
@@ -77,7 +82,10 @@ class Downloader:
             print("File exists already...")
         
 if __name__ == "__main__":
-    pass
+    response = requests.get("https://www.google.com/")
+    
+    d = Downloader()
+    d.give_response(response)
 
     
     
