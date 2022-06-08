@@ -4,7 +4,6 @@ Helper file for networking related stuff
 """
 import requests
 
-
 def get_http_response(url: str) -> requests.Response:
     """
     Return http response using requests package

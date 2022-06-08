@@ -98,4 +98,4 @@ if __name__ == "__main__":
             "https://github.com/HRemonen/Python-Websurfer"]
     empty = []
     
-    ws = Crawler(empty).crawl()
+    ws = Crawler(test_sites).crawl()

@@ -1,6 +1,11 @@
 import requests
+import lxml
+
+from time import sleep
 
 from utils import validators
+from core.downloader import Downloader
+
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
@@ -27,28 +32,26 @@ class Parser:
         Creates a dataset (dictionary) of html file.
     
     """
-    def __init__(self, filepath: str = None, response: object = None) -> None:
+    def __init__(self, response: object) -> None:
         """
         Parameters
         ----------
-        filepath : (Optional) str
-            Filepath of the file to parse data out of. 
-        response : (Optional) object
+        response : object
             Response object of the URL to parse data out of.   
         """
-        self.filepath = filepath
-        self.response = response
-        self.soup = None
         
-        if filepath is not None:
-            self.filepath = filepath
-            self.soup = BeautifulSoup(open(filepath, "r"), "html.parser")
-        
-        if response is not None:
-            if response is not isinstance(response, requests.Response):
-                raise TypeError("Response object was not of accepted type")
-            else: self.response = response
+        if not isinstance(response, requests.Response):
+            raise TypeError("Response object was not of accepted type")
+        else: 
+            self.response = response
+            self.downloader = Downloader()
+            self.downloader.give_response(response)
+            self.downloader.download()
             
+            sleep(1)
+            
+            self.filepath = self.downloader.get_filepath()
+            self.soup = BeautifulSoup(open(self.filepath, "r"), "html.parser")
         
     def get_base_url(self) -> str:
         """
@@ -60,16 +63,8 @@ class Parser:
             Base URL (<scheme>://<netloc>/)
     
         """
-        if self.response is not None:
-            response_url = self.response.url
+        response_url = urlparse(self.response.url)
     
-        else:
-            if self.filepath is not None:
-                #read site URL from the file downloaded.
-                with open(self.filepath, "r") as f:
-                    response_url = urlparse(f.readline().strip())
-            else: 
-                raise RuntimeError("Nothing to get base URL from! Please provide needed parameters or class attributes.")
         
         #Get the "base URL" for the relative URLs to work correctly
         #Base URL consist of URL scheme and netloc basically, ignore anything else.
@@ -162,7 +157,9 @@ class Parser:
         return dataset
 
 if __name__ == "__main__":
-    filepath = "downloads/html/github.comHRemonenPython-Websurfer.html"
-    p = Parser(filepath=filepath)
+    response = requests.get("https://github.com/")
+    p = Parser(response)
+    
     print(p.get_base_url())
     print(p.parse_anchors())
+

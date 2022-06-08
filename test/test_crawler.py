@@ -1,4 +1,3 @@
-import queue
 import unittest
 
 from webster.crawler import Crawler
@@ -52,12 +51,13 @@ class TestCrawling(unittest.TestCase):
         ws1 = Crawler(OKSites)
         ws1.crawling = True
         with self.assertRaises(RuntimeError):
+            #ws1.crawl()
             ws1.crawl()
             
     def testEmptyQueueCrawling(self):
-        ws1 = Crawler([])
+        ws1 = Crawler(["https://google.com/"])
         with self.assertRaises(RuntimeError):
-            ws1.crawl
+            ws1.crawl()
         
 if __name__ == "__main__":
     unittest.main()
