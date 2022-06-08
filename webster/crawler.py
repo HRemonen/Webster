@@ -73,12 +73,8 @@ class Crawler:
         print("Starting to crawl...")
         
         while self.crawling:
-            try:
-                if self.queue.empty():
-                    raise RuntimeError("Nothing to crawl...")
-            except Exception:
-                self.crawling = False
-                break
+            if self.queue.empty():
+                raise RuntimeError("Nothing to crawl...")
                 
             #get next free URL from queue
             URL_to_download = self.queue.get()
@@ -91,9 +87,6 @@ class Crawler:
                 
             #print("Downloading...", filename)
             self.downloader.download()
-        
-        if self.crawling is False:
-            print("Stopping to crawl... Please wait.")
 
 if __name__ == "__main__":
     #ws1 = Interface("https://google.com/")
@@ -103,5 +96,6 @@ if __name__ == "__main__":
             "https://www.github.com/", 
             "https://www.youtube.com/",
             "https://github.com/HRemonen/Python-Websurfer"]
+    empty = []
     
-    ws = Crawler(test_sites).crawl()
+    ws = Crawler(empty).crawl()

@@ -47,5 +47,17 @@ class TestCrawler(unittest.TestCase):
         with self.assertRaises(TypeError):
             ws3 = Crawler(OKSites, allowed_urls=BADSites)
 
+class TestCrawling(unittest.TestCase):
+    def testMultipleSimultaniousCrawlings(self):
+        ws1 = Crawler(OKSites)
+        ws1.crawling = True
+        with self.assertRaises(RuntimeError):
+            ws1.crawl()
+            
+    def testEmptyQueueCrawling(self):
+        ws1 = Crawler([])
+        with self.assertRaises(RuntimeError):
+            ws1.crawl
+        
 if __name__ == "__main__":
     unittest.main()
