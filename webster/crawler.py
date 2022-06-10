@@ -82,15 +82,21 @@ class Crawler:
                 raise RuntimeError("Already crawling!")
         self.crawling = True
         
-        while self.crawling: 
+        while self.crawling:
+            item_anchors = []
+            
             for item in items:
-                print("Processing...", item)
+                print("Processing...", item.url)
                 if item.url not in responses:
                     print("Adding...", item.url)
                     responses[item.url] = item
                     item_anchors = Parser(item).parse_anchors()
-                
-            items = self._start_requests(item_anchors)
+                else: print("Skipping url,", item.url)
+            if item_anchors:
+                items = self._start_requests(item_anchors)
+            else:
+                print("Nothing to crawl. Exiting crawler.")
+                self.crawling = False
             
         return responses
     
@@ -109,7 +115,7 @@ if __name__ == "__main__":
     
     allowed = ["https://webscraper.io/"]
     
-    ws = Crawler(sites)
+    ws = Crawler(sites, allowed_urls=allowed)
     xs = ws.crawl()
     
     print(len(xs))
