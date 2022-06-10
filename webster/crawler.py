@@ -85,7 +85,6 @@ class Crawler:
             response_anchors = []
             
             for resp in response_list:
-                print("Processing...", resp.url)
                 if resp.url not in responses:
                     print("Adding...", resp.url)
                     responses[resp.url] = resp

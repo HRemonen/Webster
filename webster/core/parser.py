@@ -52,27 +52,28 @@ class Parser:
         
         # find every <a> tag from file, with href attribute.
         for anchor in extractor_elements:
-            #anchor = a.attrs['href'] if "href" in a.attrs else ''
+            
             #if anchor start with / it means it is relative path or sub domain
             if anchor.startswith("/"):
-                if anchor.startswith("//"):
-                    url = base_url + anchor[1:]
-                else:
-                    url = base_url + anchor
-                    if url in urls:
-                        continue
-                    else:
-                        urls.append(url)
-
+                url = base_url + anchor[1:]
+                
             #if anchor is URL istead of relative path add it to the urls list.
             elif validators.URLValidator(anchor):
                 urls.append(anchor)
-        
+                
+            else:
+                url = base_url + anchor
+                if url in urls:
+                    continue
+                else:
+                    urls.append(url)
+
         return urls
 
 if __name__ == "__main__":
     
     response = requests.get("https://stackoverflow.com/")
     p = Parser(response)
-    
-    print(p.parse_anchors())
+    ps = p.parse_anchors()
+    print(ps)
+    print(len(ps))
