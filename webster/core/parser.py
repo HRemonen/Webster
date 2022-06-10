@@ -53,8 +53,6 @@ class Parser:
         base_url = http_response.base_url(self.response)
         extractor_elements = self.extractor.xpath('.//a/@href')
         
-        print(extractor_elements)
-        
         # find every <a> tag from file, with href attribute.
         for anchor in extractor_elements:
             #anchor = a.attrs['href'] if "href" in a.attrs else ''
@@ -62,12 +60,12 @@ class Parser:
             if anchor.startswith("/"):
                 if anchor.startswith("//"):
                     url = base_url + anchor[1:]
-                    
-                else: url = base_url + anchor
-                if url in urls:
-                        continue
                 else:
-                    urls.append(url)
+                    url = base_url + anchor
+                    if url in urls:
+                        continue
+                    else:
+                        urls.append(url)
 
             #if anchor is URL istead of relative path add it to the urls list.
             elif validators.URLValidator(anchor):
@@ -126,8 +124,7 @@ class Parser:
 
 if __name__ == "__main__":
     
-    response = requests.get("https://www.helsinki.fi")
+    response = requests.get("https://stackoverflow.com/")
     p = Parser(response)
     
     print(p.parse_anchors())
-

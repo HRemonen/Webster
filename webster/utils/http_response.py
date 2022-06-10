@@ -27,19 +27,19 @@ def base_url(response: object) -> str:
         
     return base_url
 
-def http_response(url: str) -> object:
+def response(url: str) -> object:
     """
     Return http response using requests package
     """
     try:
-        response = requests.get(url, timeout=2)
+        response = requests.get(url, timeout=15)
         return response
     except requests.RequestException:
-        print("Something went wrong requesting page")
+        print(requests.RequestException)
     
 
 if __name__ == "__main__":
     s = "https://www.youtube.com/"
-    response = http_response(s)
+    rsp = response(s)
     
           
