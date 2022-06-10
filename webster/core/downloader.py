@@ -17,31 +17,34 @@ class Downloader:
     A class that represents Downloader module used to download 
     webpages and saving webpages in html format.
     
+    Attributes
+    ----------
+    response : object
+        Response object.
+    
     Methods
     -------
     download()
         Downloads site content and saves the content as html file.  
     """
-    def __init__(self) -> None:
-        try:
-            os.makedirs(DL_DIR)
-        except FileExistsError:
-            pass
-        
-        self._response = None
-        self._filename = None
-        self._filepath = None
-        
-    def give_response(self, response: requests.Response):
+    def __init__(self, response: object) -> None:
         """
-        Give response object to Downloader module.
-        Do this before using download() method.
+        Parameters
+        ----------
+        response : object
+            Response object of the URL to download.   
         """
+        
         if not isinstance(response, requests.Response):
             raise TypeError("Response object was not of accepted type")
-        self._response = response
-        self._filename = response.url.split("//")[1].replace("/", "") + ".html"   
-        self._filepath = os.path.join(DL_DIR, self._filename)
+        else:
+            self.response = response
+            self.filename = response.url.split("//")[1].replace("/", "") + ".html"   
+            self.filepath = os.path.join(DL_DIR, self.filename)
+            try:
+                os.makedirs(DL_DIR)
+            except FileExistsError:
+                pass
               
     def get_downloader_response(self):
         return self._response
@@ -60,21 +63,16 @@ class Downloader:
     def download(self) -> None:
         """
         Downloads site content and saves the content as html file.
-        
-        Raises
-        ------
-        FileExistsError
-            If the website already has been downloaded and saved.
         """
 
         #Try to save the file in DL_DIR folder
         try:       
-            if not os.path.isfile(self._filepath):
-                with open(self._filepath, 'w') as file:
-                    file.write(self._response.url+"\n\n")
+            if not os.path.isfile(self.filepath):
+                with open(self.filepath, 'w') as file:
+                    file.write(self.response.url+"\n\n")
                     file.write("File downloaded: ")
                     file.write(NOW.strftime("%d-%m-%Y, %H:%M:%S")+"\n\n")
-                    file.write(self._response.text)
+                    file.write(self.response.text)
 
             #If the file already exists, raise error
             else: raise FileExistsError
@@ -84,8 +82,9 @@ class Downloader:
 if __name__ == "__main__":
     response = requests.get("https://www.google.com/")
     
-    d = Downloader()
-    d.give_response(response)
+    d = Downloader(response)
+    d.download()
+
 
     
     

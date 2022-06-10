@@ -1,11 +1,8 @@
 import uuid
 
-import queue as q
-
 from utils import validators
 from utils import http_response
 from core.parser import Parser
-from core.downloader import Downloader
 
 class Crawler:
     """
@@ -31,8 +28,7 @@ class Crawler:
     Methods
     -------
     crawl()
-        Starts crawler with given starting points. Crawls until there is no more websites found.
-        Downloads every crawled website.
+        Starts crawler with given starting points.
     
     """
     
@@ -41,7 +37,7 @@ class Crawler:
                 allowed_urls: list = None,
                 mode: str = None,
         ) -> None:
-        self.queue = q.Queue(maxsize=0)
+        
         self._ID = uuid.uuid1()
         
         if mode is not None:
@@ -50,49 +46,79 @@ class Crawler:
         else: self.mode = "auto"           
         
         if validators.URLValidator(start_urls):
-            [self.queue.put(url) for url in start_urls]
+            self.start_urls = start_urls
         else: raise TypeError(f"URL(s) was not of accepted type")
         
         if allowed_urls is not None:
             if validators.URLValidator(allowed_urls):
                 self.allowed_urls = allowed_urls
             else: raise TypeError(f"URL(s) was not of accepted type")
-    
-        self.downloader = Downloader()
-        self.parser = None
+        else: self.allowed_urls = None
+        
         self.crawling = False
     
-    def __str__(self):
-        return f"Crawler: ", self._ID
-     
+    def _start_requests(self, urls):
+        """
+        Start requesting urls from the starting urls.
+        """
+        
+        for url in urls:
+            if self.allowed_urls is not None:
+                if any(http_response.netloc(url) 
+                    in s for s in self.allowed_urls):
+                    yield http_response.response(url)
+            else: yield http_response.response(url)
+    
     def crawl(self) -> None:
+        """
+        Crawl domains to get response objects.
+        """
+        
+        responses = {}
+        response_list = self._start_requests(self.start_urls)
+        
         if self.crawling:
-            raise RuntimeError("Already crawling!")
+                raise RuntimeError("Already crawling!")
         self.crawling = True
-        print("Starting to crawl...")
         
         while self.crawling:
-            if self.queue.empty():
-                raise RuntimeError("Nothing to crawl...")
+            response_anchors = []
+            
+            for resp in response_list:
+                print("Processing...", resp.url)
+                if resp.url not in responses:
+                    print("Adding...", resp.url)
+                    responses[resp.url] = resp
+                    response_anchors = Parser(resp).parse_anchors()
+                else: print("Skipping url,", resp.url)
                 
-            #get next free URL from queue
-            URL_to_download = self.queue.get()
-            print("Getting:", URL_to_download)
+            if response_anchors:
+                response_list = self._start_requests(response_anchors)
+            else:
+                print("Nothing to crawl. Exiting crawler.")
+                self.crawling = False
             
-            rsp = http_response.response(URL_to_download)
-            count += 1
-            print(rsp)
-            
-            urls = Parser(rsp).parse_anchors()
-            [self.queue.put(url) for url in urls]
+        return responses
+    
+    def __str__(self):
+        return f"Crawler: " + str(self._ID)
+        
     
 if __name__ == "__main__":
     #ws1 = Interface("https://google.com/")
     #ws1.run()
     #ws1 = WebSurfer("https://google.com/")
-    test_sites = [ 
-            "https://www.github.com/",  
-            "https://stackoverflow.com/"]
+    sites = [ 
+            "https://webscraper.io/test-sites",  
+            ]
     empty = []
     
-    ws = Crawler(test_sites).crawl()
+    allowed = ["https://webscraper.io/"]
+    
+    ws = Crawler(sites, allowed_urls=allowed)
+    print(ws)
+    xs = ws.crawl()
+    
+    print(len(xs))
+
+  

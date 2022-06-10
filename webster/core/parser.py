@@ -8,7 +8,7 @@ from utils import http_response
 class Parser:
     """
     A class that represents Parser module used to parse 
-    downloaded webpages (html or response objects files). 
+    response objects. 
     
     Attributes
     ----------
@@ -19,9 +19,6 @@ class Parser:
     -------
     parse_anchors()
         Parses the downloaded html file for anchors. 
-    
-    create_dataset()
-        Creates a dataset (dictionary) of html file.
     
     """
     def __init__(self, response: object) -> None:
@@ -72,55 +69,6 @@ class Parser:
                 urls.append(anchor)
         
         return urls
-
-    def create_dataset(self) -> dict:
-        """
-        Creates a dataset (dictionary) of chosen downloaded html file.
-        
-        Parameters
-        ----------
-        None.
-        
-        Raises
-        ------
-        None.
-    
-        Returns
-        -------
-        dict
-            a dictionary that resembles data gathered from the website.
-            data consist of:
-                Filepath
-                Website URL
-                Title
-                Keywords
-                Description
-                URLs
-    
-        """
-        
-        try:
-            keywords = self.soup.find("meta", 
-                attrs={"name" : "keywords"}).get("content")
-        except AttributeError:
-            keywords = ""
-        
-        try:
-            description = self.soup.find("meta", 
-                attrs={"name" : "description"}).get("content")
-        except AttributeError:
-            description = ""
-
-        dataset = {
-            "filepath" : self.filepath,
-            "website URL" : self.get_base_url(),
-            "title" : self.soup.title.string,
-            "keywords" : keywords.split(",") if keywords else None,
-            "description" : description if description else None,
-            "URLs" : self.parse_anchors()
-        }
-
-        return dataset
 
 if __name__ == "__main__":
     
