@@ -1,10 +1,9 @@
-from tracemalloc import start
 import uuid
 
 import queue as q
 
 from utils import validators
-from utils import networking
+from utils import http_response
 from core.parser import Parser
 from core.downloader import Downloader
 
@@ -78,24 +77,22 @@ class Crawler:
                 
             #get next free URL from queue
             URL_to_download = self.queue.get()
-            response = networking.get_http_response(URL_to_download)
-            self.downloader.give_response(response)
-                
-            filepath = self.downloader.get_filepath()
-            print(filepath)
-            filename = self.downloader.get_filename()
-                
-            #print("Downloading...", filename)
-            self.downloader.download()
-
+            print("Getting:", URL_to_download)
+            
+            rsp = http_response.response(URL_to_download)
+            count += 1
+            print(rsp)
+            
+            urls = Parser(rsp).parse_anchors()
+            [self.queue.put(url) for url in urls]
+    
 if __name__ == "__main__":
     #ws1 = Interface("https://google.com/")
     #ws1.run()
     #ws1 = WebSurfer("https://google.com/")
-    test_sites = ["https://www.w3schools.com/", 
-            "https://www.github.com/", 
-            "https://www.youtube.com/",
-            "https://github.com/HRemonen/Python-Websurfer"]
+    test_sites = [ 
+            "https://www.github.com/",  
+            "https://stackoverflow.com/"]
     empty = []
     
     ws = Crawler(test_sites).crawl()

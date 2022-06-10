@@ -1,13 +1,9 @@
 import requests
-import lxml
-
-from time import sleep
+import lxml.html
 
 from utils import validators
-from core.downloader import Downloader
+from utils import http_response
 
-from urllib.parse import urlparse
-from bs4 import BeautifulSoup
 
 class Parser:
     """
@@ -16,15 +12,11 @@ class Parser:
     
     Attributes
     ----------
-    filepath : (Optional) str
-        Filepath of the file user wants to parse data out of.
-        User defines filepath with filedialog.
+    response : object
+        Response object.
     
     Methods
     -------
-    get_base_url()
-        Get websites base URL (URL netloc) from the downloaded file.
-        
     parse_anchors()
         Parses the downloaded html file for anchors. 
     
@@ -44,34 +36,8 @@ class Parser:
             raise TypeError("Response object was not of accepted type")
         else: 
             self.response = response
-            self.downloader = Downloader()
-            self.downloader.give_response(response)
-            self.downloader.download()
-            
-            sleep(1)
-            
-            self.filepath = self.downloader.get_filepath()
-            self.soup = BeautifulSoup(open(self.filepath, "r"), "html.parser")
+            self.extractor = lxml.html.fromstring(self.response.text)
         
-    def get_base_url(self) -> str:
-        """
-        Get websites base URL (URL netloc) from the downloaded file.
-
-        Returns
-        -------
-        string
-            Base URL (<scheme>://<netloc>/)
-    
-        """
-        response_url = urlparse(self.response.url)
-    
-        
-        #Get the "base URL" for the relative URLs to work correctly
-        #Base URL consist of URL scheme and netloc basically, ignore anything else.
-        base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=response_url)
-        
-        return base_url
-
     def parse_anchors(self) -> list:
         """
         Parses anchors from the file / response object and return anchor list.  
@@ -84,22 +50,22 @@ class Parser:
         """
         
         urls = []    
-        base_url = self.get_base_url()
+        base_url = http_response.base_url(self.response)
+        extractor_elements = self.extractor.xpath('.//a/@href')
         
         # find every <a> tag from file, with href attribute.
-        for a in self.soup.find_all("a"):
-            anchor = a.attrs['href'] if "href" in a.attrs else ''
+        for anchor in extractor_elements:
+            #anchor = a.attrs['href'] if "href" in a.attrs else ''
             #if anchor start with / it means it is relative path or sub domain
             if anchor.startswith("/"):
-                #strip the first / from the URL to prevent "//" that would crash program
-                """
-                anchors.append(anchor[1:])
-                """
-                
-                url = base_url + anchor[1:]
-                if url in urls:
-                    continue
-                urls.append(url)
+                if anchor.startswith("//"):
+                    url = base_url + anchor[1:]
+                else:
+                    url = base_url + anchor
+                    if url in urls:
+                        continue
+                    else:
+                        urls.append(url)
 
             #if anchor is URL istead of relative path add it to the urls list.
             elif validators.URLValidator(anchor):
@@ -157,9 +123,8 @@ class Parser:
         return dataset
 
 if __name__ == "__main__":
-    response = requests.get("https://github.com/")
+    
+    response = requests.get("https://stackoverflow.com/")
     p = Parser(response)
     
-    print(p.get_base_url())
     print(p.parse_anchors())
-
