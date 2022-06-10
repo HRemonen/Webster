@@ -5,7 +5,6 @@ import queue as q
 from utils import validators
 from utils import http_response
 from core.parser import Parser
-from core.downloader import Downloader
 
 class Crawler:
     """
@@ -31,8 +30,7 @@ class Crawler:
     Methods
     -------
     crawl()
-        Starts crawler with given starting points. Crawls until there is no more websites found.
-        Downloads every crawled website.
+        Starts crawler with given starting points.
     
     """
     
@@ -50,49 +48,68 @@ class Crawler:
         else: self.mode = "auto"           
         
         if validators.URLValidator(start_urls):
-            [self.queue.put(url) for url in start_urls]
+            self.start_urls = start_urls
         else: raise TypeError(f"URL(s) was not of accepted type")
         
         if allowed_urls is not None:
             if validators.URLValidator(allowed_urls):
                 self.allowed_urls = allowed_urls
             else: raise TypeError(f"URL(s) was not of accepted type")
-    
-        self.downloader = Downloader()
-        self.parser = None
+        
         self.crawling = False
+    
+    def _start_requests(self, urls):
+        """
+        Start requesting urls from the starting urls.
+        """
+        
+        for url in urls:
+            if any(http_response.netloc(url) 
+                   in s for s in self.allowed_urls):
+                yield http_response.response(url)
+            else: continue
+    
+    def crawl(self) -> None:
+        """
+        Crawl domains to get response objects.
+        """
+        responses = {}
+        items = self._start_requests(self.start_urls)
+        
+        if self.crawling:
+                raise RuntimeError("Already crawling!")
+        self.crawling = True
+        
+        while self.crawling: 
+            for item in items:
+                item_anchors = Parser(item).parse_anchors()
+
+                if item.url not in responses:
+                    print("Adding...", item.url)
+                    responses[item.url] = item
+                
+            items = self._start_requests(item_anchors)
+            
+        return responses
     
     def __str__(self):
         return f"Crawler: ", self._ID
-     
-    def crawl(self) -> None:
-        if self.crawling:
-            raise RuntimeError("Already crawling!")
-        self.crawling = True
-        print("Starting to crawl...")
         
-        while self.crawling:
-            if self.queue.empty():
-                raise RuntimeError("Nothing to crawl...")
-                
-            #get next free URL from queue
-            URL_to_download = self.queue.get()
-            print("Getting:", URL_to_download)
-            
-            rsp = http_response.response(URL_to_download)
-            count += 1
-            print(rsp)
-            
-            urls = Parser(rsp).parse_anchors()
-            [self.queue.put(url) for url in urls]
     
 if __name__ == "__main__":
     #ws1 = Interface("https://google.com/")
     #ws1.run()
     #ws1 = WebSurfer("https://google.com/")
-    test_sites = [ 
-            "https://www.github.com/",  
-            "https://stackoverflow.com/"]
+    sites = [ 
+            "https://webscraper.io/test-sites",  
+            ]
     empty = []
     
-    ws = Crawler(test_sites).crawl()
+    allowed = ["https://webscraper.io/"]
+    
+    ws = Crawler(sites, allowed_urls=allowed)
+    xs = ws.crawl()
+    
+    print(len(xs))
+
+  

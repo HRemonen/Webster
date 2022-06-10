@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 def base_url(response: object) -> str:
     """
-    Get websites base URL (URL netloc) from the downloaded file.
+    Get websites base URL (URL netloc) from the response object
 
     Returns
     -------
@@ -27,6 +27,22 @@ def base_url(response: object) -> str:
         
     return base_url
 
+def netloc(url: str) -> str:
+    """
+    Get websites URL netloc from the response object
+
+    Returns
+    -------
+    string
+        Base URL (<netloc>)
+    
+    """
+    url = urlparse(url)
+        
+    netloc = '{uri.netloc}'.format(uri=url)
+        
+    return netloc
+
 def response(url: str) -> object:
     """
     Return http response using requests package
@@ -40,6 +56,8 @@ def response(url: str) -> object:
 
 if __name__ == "__main__":
     s = "https://www.youtube.com/"
+
     rsp = response(s)
+    print(rsp.url)
     
           
