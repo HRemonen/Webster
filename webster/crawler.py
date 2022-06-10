@@ -1,7 +1,5 @@
 import uuid
 
-import queue as q
-
 from utils import validators
 from utils import http_response
 from core.parser import Parser
@@ -39,7 +37,7 @@ class Crawler:
                 allowed_urls: list = None,
                 mode: str = None,
         ) -> None:
-        self.queue = q.Queue(maxsize=0)
+        
         self._ID = uuid.uuid1()
         
         if mode is not None:
@@ -75,25 +73,27 @@ class Crawler:
         """
         Crawl domains to get response objects.
         """
+        
         responses = {}
-        items = self._start_requests(self.start_urls)
+        response_list = self._start_requests(self.start_urls)
         
         if self.crawling:
                 raise RuntimeError("Already crawling!")
         self.crawling = True
         
         while self.crawling:
-            item_anchors = []
+            response_anchors = []
             
-            for item in items:
-                print("Processing...", item.url)
-                if item.url not in responses:
-                    print("Adding...", item.url)
-                    responses[item.url] = item
-                    item_anchors = Parser(item).parse_anchors()
-                else: print("Skipping url,", item.url)
-            if item_anchors:
-                items = self._start_requests(item_anchors)
+            for resp in response_list:
+                print("Processing...", resp.url)
+                if resp.url not in responses:
+                    print("Adding...", resp.url)
+                    responses[resp.url] = resp
+                    response_anchors = Parser(resp).parse_anchors()
+                else: print("Skipping url,", resp.url)
+                
+            if response_anchors:
+                response_list = self._start_requests(response_anchors)
             else:
                 print("Nothing to crawl. Exiting crawler.")
                 self.crawling = False
@@ -101,7 +101,7 @@ class Crawler:
         return responses
     
     def __str__(self):
-        return f"Crawler: ", self._ID
+        return f"Crawler: " + str(self._ID)
         
     
 if __name__ == "__main__":
@@ -116,6 +116,7 @@ if __name__ == "__main__":
     allowed = ["https://webscraper.io/"]
     
     ws = Crawler(sites, allowed_urls=allowed)
+    print(ws)
     xs = ws.crawl()
     
     print(len(xs))
