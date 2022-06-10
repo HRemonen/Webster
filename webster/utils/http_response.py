@@ -48,10 +48,10 @@ def response(url: str) -> object:
     Return http response using requests package
     """
     try:
-        response = requests.get(url, timeout=15)
+        response = requests.get(url, timeout=2)
         return response
     except requests.RequestException:
-        print(requests.RequestException)
+        pass
     
 
 if __name__ == "__main__":

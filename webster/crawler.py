@@ -55,6 +55,7 @@ class Crawler:
             if validators.URLValidator(allowed_urls):
                 self.allowed_urls = allowed_urls
             else: raise TypeError(f"URL(s) was not of accepted type")
+        else: self.allowed_urls = None
         
         self.crawling = False
     
@@ -64,10 +65,11 @@ class Crawler:
         """
         
         for url in urls:
-            if any(http_response.netloc(url) 
-                   in s for s in self.allowed_urls):
-                yield http_response.response(url)
-            else: continue
+            if self.allowed_urls is not None:
+                if any(http_response.netloc(url) 
+                    in s for s in self.allowed_urls):
+                    yield http_response.response(url)
+            else: yield http_response.response(url)
     
     def crawl(self) -> None:
         """
@@ -82,11 +84,11 @@ class Crawler:
         
         while self.crawling: 
             for item in items:
-                item_anchors = Parser(item).parse_anchors()
-
+                print("Processing...", item)
                 if item.url not in responses:
                     print("Adding...", item.url)
                     responses[item.url] = item
+                    item_anchors = Parser(item).parse_anchors()
                 
             items = self._start_requests(item_anchors)
             
@@ -107,7 +109,7 @@ if __name__ == "__main__":
     
     allowed = ["https://webscraper.io/"]
     
-    ws = Crawler(sites, allowed_urls=allowed)
+    ws = Crawler(sites)
     xs = ws.crawl()
     
     print(len(xs))
