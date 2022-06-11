@@ -1,6 +1,8 @@
 import requests
 import lxml.html
 
+from urllib.parse import urljoin
+
 from utils import validators
 from utils import http_response
 
@@ -46,33 +48,31 @@ class Parser:
     
         """
         
-        urls = []    
+        urls = [] 
+          
         base_url = http_response.base_url(self.response)
         extractor_elements = self.extractor.xpath('.//a/@href')
         
         # find every <a> tag from file, with href attribute.
         for anchor in extractor_elements:
-            
+            #if anchor is URL instead of relative path add it to the urls list.
+            if validators.URLValidator(anchor):
+                url = anchor
             #if anchor start with / it means it is relative path or sub domain
-            if anchor.startswith("/"):
-                url = base_url + anchor[1:]
-                
-            #if anchor is URL istead of relative path add it to the urls list.
-            elif validators.URLValidator(anchor):
-                urls.append(anchor)
-                
+
             else:
-                url = base_url + anchor
-                if url in urls:
+                url = urljoin(base_url, anchor)
+                
+            if url in urls:
                     continue
-                else:
-                    urls.append(url)
+            else:
+                urls.append(url)   
 
         return urls
 
 if __name__ == "__main__":
     
-    response = requests.get("https://stackoverflow.com/")
+    response = requests.get("https://webscraper.io/test-sites")
     p = Parser(response)
     ps = p.parse_anchors()
     print(ps)

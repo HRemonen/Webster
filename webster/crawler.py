@@ -65,7 +65,7 @@ class Crawler:
         for url in urls:
             if self.allowed_urls is not None:
                 if any(http_response.netloc(url) 
-                    in s for s in self.allowed_urls):
+                    in http_response.netloc(s) for s in self.allowed_urls):
                     yield http_response.response(url)
             else: yield http_response.response(url)
     
@@ -85,11 +85,14 @@ class Crawler:
             response_anchors = []
             
             for resp in response_list:
-                if resp.url not in responses:
-                    print("Adding...", resp.url)
-                    responses[resp.url] = resp
-                    response_anchors = Parser(resp).parse_anchors()
-                else: print("Skipping url,", resp.url)
+                if resp is not None:
+                    if resp.url not in responses:
+                        print("Adding...", resp.url)
+                        responses[resp.url] = resp
+                        response_anchors = Parser(resp).parse_anchors()
+                    else: print("Skipping url,", resp.url)
+                        
+                else: continue
                 
             if response_anchors:
                 response_list = self._start_requests(response_anchors)
@@ -119,5 +122,6 @@ if __name__ == "__main__":
     xs = ws.crawl()
     
     print(len(xs))
+    print(xs)
 
   
