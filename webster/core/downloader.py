@@ -36,7 +36,9 @@ class Downloader:
         """
         
         if not isinstance(response, requests.Response):
-            raise TypeError("Response object was not of accepted type")
+            raise TypeError(
+                    "Expected response type of requests.Response, instead got: "
+                    , type(response))
         else:
             self.response = response
             self.filename = response.url.split("//")[1].replace("/", "") + ".html"   

@@ -1,5 +1,4 @@
 import re
-import queue
 
 def ModeValidator(mode: str) -> bool:
     """
@@ -26,8 +25,9 @@ def ModeValidator(mode: str) -> bool:
     
     if mode in valid_modes:
         return True
-    else: raise TypeError(f"mode type {mode} not understood")
-
+    else: raise TypeError(
+                    "Expected Mode type of string, instead got: "
+                    , type(mode))
 
 def URLValidator(url: list) -> bool:
     """
@@ -60,7 +60,9 @@ def URLValidator(url: list) -> bool:
     
     if not isinstance(url, str):
         if not isinstance(url, list):
-            raise TypeError(f"URL(s) was not of accepted type")
+            raise TypeError(
+                    "Expected URL type of list or string, instead got: "
+                    , type(url))
         else: 
             return all([_validate(x) for x in url])           
     else: return _validate(url)           

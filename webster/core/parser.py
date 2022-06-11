@@ -32,7 +32,9 @@ class Parser:
         """
         
         if not isinstance(response, requests.Response):
-            raise TypeError("Response object was not of accepted type")
+            raise TypeError(
+                    "Expected response type of requests.Response, instead got: "
+                    , type(response))
         else: 
             self.response = response
             self.extractor = lxml.html.fromstring(self.response.text)

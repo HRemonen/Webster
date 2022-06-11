@@ -47,12 +47,10 @@ class Crawler:
         
         if validators.URLValidator(start_urls):
             self.start_urls = start_urls
-        else: raise TypeError(f"URL(s) was not of accepted type")
         
         if allowed_urls is not None:
             if validators.URLValidator(allowed_urls):
                 self.allowed_urls = allowed_urls
-            else: raise TypeError(f"URL(s) was not of accepted type")
         else: self.allowed_urls = None
         
         self.crawling = False

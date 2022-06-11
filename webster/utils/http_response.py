@@ -18,7 +18,9 @@ def base_url(response: object) -> str:
     """
     
     if not isinstance(response, requests.Response):
-            raise TypeError("Response object was not of accepted type")
+            raise TypeError(
+                    "Expected response type of requests.Response, instead got: "
+                    , type(response))
     else: response_url = urlparse(response.url)
         
     #Get the "base URL" for the relative URLs to work correctly
