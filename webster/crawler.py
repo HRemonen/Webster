@@ -1,5 +1,7 @@
 import uuid
 
+from typing import Callable, List, Optional, Tuple, Type, TypeVar, Union
+
 from utils import validators
 from utils import http_response
 from core.parser import Parser
@@ -21,10 +23,8 @@ class Crawler:
     mode : (Optional) str, default = auto.
         Caution:
             NotImplemented
-        Define used mode.
         Default: "auto" -> Supports automation.
         
-    
     Methods
     -------
     crawl()
@@ -34,8 +34,8 @@ class Crawler:
     
     def __init__(self, 
                 start_urls: list,
-                allowed_urls: list = None,
-                mode: str = None,
+                allowed_urls: Optional[list] = None,
+                mode: Optional[list] = None,
         ) -> None:
         
         self._ID = uuid.uuid1()
@@ -55,7 +55,7 @@ class Crawler:
         
         self.crawling = False
     
-    def _start_requests(self, urls):
+    def _start_requests(self, urls: list) -> object:
         """
         Start requesting urls from the starting urls.
         """

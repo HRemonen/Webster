@@ -1,7 +1,9 @@
 import pycurl
+import lxml
+
 from io import BytesIO 
 
-from typing import Callable, List, Optional, Tuple, Type, TypeVar, Union
+from typing import List, Optional, Union
 
 import crawler
 from utils import validators
@@ -9,7 +11,32 @@ from utils import validators
 
 class Request(object):
     """
-    Represents an HTTP request object.
+    A class that represents a HTTP request object.
+    
+    Attributes
+    ----------
+    url : list
+       
+    method : str, default = "GET".
+        Request method.
+         
+    headers : (Optional) dict, default = None.
+        HTTP request headers to be send with the request to the server.
+
+    body : (Optional) bytes, default = None.
+        Request body. Will be stored as bytes.
+    
+    cookies : (Optional) dict or list of dicts, default = None.
+        HTTP request cookies to be send with the request to the server.
+        
+    encoding : str, default = "utf-8".
+        Encoding of request. Encoding is used to encode request body to bytes.
+    
+    Methods
+    -------
+    get()
+        Returns bytes object of HTTP request.
+    
     """
 
     def __init__(
@@ -19,14 +46,12 @@ class Request(object):
         headers: Optional[dict] = None,
         body: Optional[bytes] = None,
         cookies: Optional[Union[dict, List[dict]]] = None,
-        meta: Optional[dict] = None,
         encoding: str = "utf-8",
     ) -> None:
         
         self._encoding = encoding
         self.method = str(method).upper()
         self.url = self._set_url(url)
-        self._meta = dict(meta) if meta else None
         
         if body is not None:
             if isinstance(body, bytes):
@@ -81,6 +106,4 @@ class Request(object):
 if __name__ == "__main__":
     url = "https://webscraper.io/test-sites"
     request = Request(url)
-    print(request)
     
-    print(Request(url, body=123))
