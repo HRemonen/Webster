@@ -15,7 +15,9 @@ class Request(object):
     
     Attributes
     ----------
-    url : list
+    url : str
+        URL to request data from.
+        URL must be in correct form: ex. https://example.com/ or https://www.example.com/
        
     method : str, default = "GET".
         Request method.
@@ -24,13 +26,14 @@ class Request(object):
         HTTP request headers to be send with the request to the server.
 
     body : (Optional) bytes, default = None.
-        Request body. Will be stored as bytes.
+        Request body. Will be stored as bytes, encoded using utf-8.
     
     cookies : (Optional) dict or list of dicts, default = None.
         HTTP request cookies to be send with the request to the server.
         
     encoding : str, default = "utf-8".
         Encoding of request. Encoding is used to encode request body to bytes.
+        Also allows for decoding bytes to string.
     
     Methods
     -------
@@ -60,6 +63,7 @@ class Request(object):
                 raise TypeError(
                     "Expected body type of bytes, instead got: "
                     , type(body))
+        else: self.body = None
         
         self.get = self.get()
         
@@ -72,6 +76,9 @@ class Request(object):
 
     def _get_body(self) -> bytes:
         return self._body
+    
+    def _get_body_string(self) -> str:
+        return self.body.decode(self._encoding)
 
     def get(self) -> bytes:
         """
