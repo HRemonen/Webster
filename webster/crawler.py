@@ -1,7 +1,10 @@
 import uuid
 
+from typing import Optional
+
 from utils import validators
-from utils import http_response
+from utils import url_tools
+from net.request import Request
 from core.parser import Parser
 
 class Crawler:
@@ -21,10 +24,8 @@ class Crawler:
     mode : (Optional) str, default = auto.
         Caution:
             NotImplemented
-        Define used mode.
         Default: "auto" -> Supports automation.
         
-    
     Methods
     -------
     crawl()
@@ -34,8 +35,8 @@ class Crawler:
     
     def __init__(self, 
                 start_urls: list,
-                allowed_urls: list = None,
-                mode: str = None,
+                allowed_urls: Optional[list] = None,
+                mode: Optional[list] = None,
         ) -> None:
         
         self._ID = uuid.uuid1()
@@ -47,27 +48,26 @@ class Crawler:
         
         if validators.URLValidator(start_urls):
             self.start_urls = start_urls
-        else: raise TypeError(f"URL(s) was not of accepted type")
         
         if allowed_urls is not None:
             if validators.URLValidator(allowed_urls):
                 self.allowed_urls = allowed_urls
-            else: raise TypeError(f"URL(s) was not of accepted type")
         else: self.allowed_urls = None
         
         self.crawling = False
     
-    def _start_requests(self, urls):
+    def _start_requests(self, urls: list) -> object:
         """
         Start requesting urls from the starting urls.
         """
         
         for url in urls:
+            request = Request(url)
             if self.allowed_urls is not None:
-                if any(http_response.netloc(url) 
-                    in http_response.netloc(s) for s in self.allowed_urls):
-                    yield http_response.response(url)
-            else: yield http_response.response(url)
+                if any(url_tools.URLnetloc(request.url)
+                    in url_tools.URLnetloc(s) for s in self.allowed_urls):
+                    yield request
+            else: yield request
     
     def crawl(self) -> None:
         """
@@ -75,7 +75,7 @@ class Crawler:
         """
         
         responses = {}
-        response_list = self._start_requests(self.start_urls)
+        requests = self._start_requests(self.start_urls)
         
         if self.crawling:
                 raise RuntimeError("Already crawling!")
@@ -84,18 +84,22 @@ class Crawler:
         while self.crawling:
             response_anchors = []
             
-            for resp in response_list:
-                if resp is not None:
-                    if resp.url not in responses:
-                        print("Adding...", resp.url)
-                        responses[resp.url] = resp
-                        response_anchors = Parser(resp).parse_anchors()
-                    else: print("Skipping url,", resp.url)
+            for rqs in requests:
+                if rqs is not None:
+                    if rqs.url not in responses:
+                        print("Adding...", rqs.url)
+                        responses[rqs.url] = rqs
+                        try:
+                            response_anchors = Parser(rqs).parse_anchors()
+                        except Exception:
+                            #TODO: Check why sometimes request is empty.
+                            continue
+                    else: print("Skipping url,", rqs.url)
                         
                 else: continue
                 
             if response_anchors:
-                response_list = self._start_requests(response_anchors)
+                requests = self._start_requests(response_anchors)
             else:
                 print("Nothing to crawl. Exiting crawler.")
                 self.crawling = False

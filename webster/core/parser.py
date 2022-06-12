@@ -1,10 +1,10 @@
-import requests
 import lxml.html
+import lxml.etree
 
 from urllib.parse import urljoin
 
 from utils import validators
-from utils import http_response
+from net.request import Request
 
 
 class Parser:
@@ -23,7 +23,7 @@ class Parser:
         Parses the downloaded html file for anchors. 
     
     """
-    def __init__(self, response: object) -> None:
+    def __init__(self, request: object) -> None:
         """
         Parameters
         ----------
@@ -31,11 +31,15 @@ class Parser:
             Response object of the URL to parse data out of.   
         """
         
-        if not isinstance(response, requests.Response):
-            raise TypeError("Response object was not of accepted type")
+        if not isinstance(request, Request):
+            raise TypeError(
+                    "Expected response type of Request, instead got: "
+                    , type(request))
         else: 
-            self.response = response
-            self.extractor = lxml.html.fromstring(self.response.text)
+            self.request = request
+            
+            self.extractor = lxml.html.fromstring(self.request.get())
+            
         
     def parse_anchors(self) -> list:
         """
@@ -50,7 +54,7 @@ class Parser:
         
         urls = [] 
           
-        base_url = http_response.base_url(self.response)
+        base_url = self.request.base_url()
         extractor_elements = self.extractor.xpath('.//a/@href')
         
         # find every <a> tag from file, with href attribute.
@@ -71,9 +75,4 @@ class Parser:
         return urls
 
 if __name__ == "__main__":
-    
-    response = requests.get("https://webscraper.io/test-sites")
-    p = Parser(response)
-    ps = p.parse_anchors()
-    print(ps)
-    print(len(ps))
+    pass
