@@ -89,7 +89,11 @@ class Crawler:
                     if rqs.url not in responses:
                         print("Adding...", rqs.url)
                         responses[rqs.url] = rqs
-                        response_anchors = Parser(rqs).parse_anchors()
+                        try:
+                            response_anchors = Parser(rqs).parse_anchors()
+                        except Exception:
+                            #TODO: Check why sometimes request is empty.
+                            continue
                     else: print("Skipping url,", rqs.url)
                         
                 else: continue
@@ -117,7 +121,7 @@ if __name__ == "__main__":
     
     allowed = ["https://webscraper.io/"]
     
-    ws = Crawler(sites)
+    ws = Crawler(sites, allowed_urls=allowed)
     print(ws)
     xs = ws.crawl()
     

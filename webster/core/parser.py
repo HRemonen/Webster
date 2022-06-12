@@ -37,10 +37,9 @@ class Parser:
                     , type(request))
         else: 
             self.request = request
-            try:
-                self.extractor = lxml.html.fromstring(self.request.get())
-            except lxml.etree.ParseError:
-                pass
+            
+            self.extractor = lxml.html.fromstring(self.request.get())
+            
         
     def parse_anchors(self) -> list:
         """
