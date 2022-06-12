@@ -1,9 +1,10 @@
 import uuid
 
-from typing import Callable, List, Optional, Tuple, Type, TypeVar, Union
+from typing import Optional
 
 from utils import validators
-from utils import http_response
+from utils import url_tools
+from net.request import Request
 from core.parser import Parser
 
 class Crawler:
@@ -61,11 +62,12 @@ class Crawler:
         """
         
         for url in urls:
+            request = Request(url)
             if self.allowed_urls is not None:
-                if any(http_response.netloc(url) 
-                    in http_response.netloc(s) for s in self.allowed_urls):
-                    yield http_response.response(url)
-            else: yield http_response.response(url)
+                if any(url_tools.URLnetloc(request.url)
+                    in url_tools.URLnetloc(s) for s in self.allowed_urls):
+                    yield request
+            else: yield request
     
     def crawl(self) -> None:
         """
@@ -73,7 +75,7 @@ class Crawler:
         """
         
         responses = {}
-        response_list = self._start_requests(self.start_urls)
+        requests = self._start_requests(self.start_urls)
         
         if self.crawling:
                 raise RuntimeError("Already crawling!")
@@ -82,18 +84,18 @@ class Crawler:
         while self.crawling:
             response_anchors = []
             
-            for resp in response_list:
-                if resp is not None:
-                    if resp.url not in responses:
-                        print("Adding...", resp.url)
-                        responses[resp.url] = resp
-                        response_anchors = Parser(resp).parse_anchors()
-                    else: print("Skipping url,", resp.url)
+            for rqs in requests:
+                if rqs is not None:
+                    if rqs.url not in responses:
+                        print("Adding...", rqs.url)
+                        responses[rqs.url] = rqs
+                        response_anchors = Parser(rqs).parse_anchors()
+                    else: print("Skipping url,", rqs.url)
                         
                 else: continue
                 
             if response_anchors:
-                response_list = self._start_requests(response_anchors)
+                requests = self._start_requests(response_anchors)
             else:
                 print("Nothing to crawl. Exiting crawler.")
                 self.crawling = False
@@ -115,7 +117,7 @@ if __name__ == "__main__":
     
     allowed = ["https://webscraper.io/"]
     
-    ws = Crawler(sites, allowed_urls=allowed)
+    ws = Crawler(sites)
     print(ws)
     xs = ws.crawl()
     

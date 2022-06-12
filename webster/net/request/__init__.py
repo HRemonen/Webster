@@ -93,22 +93,6 @@ class Request(object):
         base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=request_url)
             
         return base_url
-
-    def netloc(self) -> str:
-        """
-        Get websites URL netloc from the response object
-
-        Returns
-        -------
-        string
-            URL (<netloc>)
-        
-        """
-        url = urlparse(self.url)
-            
-        netloc = '{uri.netloc}'.format(uri=url)
-            
-        return netloc
     
     def get(self) -> bytes:
         """
@@ -149,10 +133,13 @@ if __name__ == "__main__":
     url = "https://webscraper.io/test-sites"
     request = Request(url)
     print(request.base_url())
-    print(request.netloc())
     
+    
+    
+    test = "https://chrome.google.com/webstore/detail/web-scraper/jnhgnonknehpejjnehehllkliplmbmhn?hl=en"
+    request = Request(test)
     response = request.get()
-    #print(response)
+    print(response)
     
     
     
