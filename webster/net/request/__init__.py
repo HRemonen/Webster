@@ -1,11 +1,9 @@
 import pycurl
-import lxml
 
 from io import BytesIO 
-
 from typing import List, Optional, Union
+from urllib.parse import urlparse
 
-import crawler
 from utils import validators
 
 
@@ -46,10 +44,10 @@ class Request(object):
         self,
         url: str,
         method: str = "GET",
-        headers: Optional[dict] = None,
-        body: Optional[bytes] = None,
-        cookies: Optional[Union[dict, List[dict]]] = None,
         encoding: str = "utf-8",
+        body: Optional[bytes] = None,
+        headers: Optional[dict] = None,
+        cookies: Optional[Union[dict, List[dict]]] = None,
     ) -> None:
         
         self._encoding = encoding
@@ -65,21 +63,53 @@ class Request(object):
                     , type(body))
         else: self.body = None
         
-        self.get = self.get()
-        
     def _get_url(self) -> str:
-        return self._url
+        return self.url
 
     def _set_url(self, url: str) -> str:
         if validators.URLValidator(url):
             return url
 
     def _get_body(self) -> bytes:
-        return self._body
+        return self.body
     
     def _get_body_string(self) -> str:
         return self.body.decode(self._encoding)
 
+    def base_url(self) -> str:
+        """
+        Get websites base URL (URL netloc) from the response object
+
+        Returns
+        -------
+        string
+            Base URL (<scheme>://<netloc>/)
+        
+        """
+        request_url = urlparse(self.url)
+        
+        #Get the "base URL" for the relative URLs to work correctly
+        #Base URL consist of URL scheme and netloc basically, ignore anything else.
+        base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=request_url)
+            
+        return base_url
+
+    def netloc(self) -> str:
+        """
+        Get websites URL netloc from the response object
+
+        Returns
+        -------
+        string
+            URL (<netloc>)
+        
+        """
+        url = urlparse(self.url)
+            
+        netloc = '{uri.netloc}'.format(uri=url)
+            
+        return netloc
+    
     def get(self) -> bytes:
         """
         GET request.
@@ -103,7 +133,7 @@ class Request(object):
         
         self.body = body
 
-        return body
+        return self.body
 
     def __str__(self):
         return f"{self.method} : {self.url}"
@@ -113,4 +143,11 @@ class Request(object):
 if __name__ == "__main__":
     url = "https://webscraper.io/test-sites"
     request = Request(url)
+    print(request.base_url())
+    print(request.netloc())
+    
+    response = request.get()
+    #print(response)
+    
+    
     
