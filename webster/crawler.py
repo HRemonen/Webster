@@ -63,7 +63,9 @@ class Crawler:
         
         for url in urls:
             request = Request(url)
-            if self.allowed_urls is not None:
+            if request is None:
+                yield None
+            elif self.allowed_urls is not None:
                 if any(url_tools.URLnetloc(request.url)
                     in url_tools.URLnetloc(s) for s in self.allowed_urls):
                     yield request
@@ -85,18 +87,13 @@ class Crawler:
             response_anchors = []
             
             for rqs in requests:
-                if rqs is not None:
+                if rqs.url is not None or rqs is not None:
                     if rqs.url not in responses:
-                        print("Adding...", rqs.url)
+                        print("Adding, ", rqs)
                         responses[rqs.url] = rqs
-                        try:
-                            response_anchors = Parser(rqs).parse_anchors()
-                        except Exception:
-                            #TODO: Check why sometimes request is empty.
-                            continue
-                    else: print("Skipping url,", rqs.url)
-                        
-                else: continue
+                        response_anchors = Parser(rqs).parse_anchors()
+        
+                    else: print("Skipping,", rqs)        
                 
             if response_anchors:
                 requests = self._start_requests(response_anchors)

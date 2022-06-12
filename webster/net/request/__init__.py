@@ -94,7 +94,8 @@ class Request(object):
             
         return base_url
     
-    def get(self) -> bytes:
+    
+    def get(self):
         """
         Send GET request to server of the request class object.
 
@@ -104,25 +105,26 @@ class Request(object):
             Website content.
         
         """
+
+        data = None
+        b = BytesIO()
+
+        crl = pycurl.Curl()
+        crl.setopt(pycurl.URL, self.url)
+        crl.setopt(pycurl.FOLLOWLOCATION, 1)
+        crl.setopt(pycurl.CONNECTTIMEOUT, 5)
+        crl.setopt(pycurl.TIMEOUT, 8)
+        crl.setopt(pycurl.WRITEDATA, b)
+
+        try:
+            crl.perform()
+            data = b.getvalue()
+        except Exception:
+            return data
         
-        b = BytesIO() 
-        crl = pycurl.Curl() 
-
-        # Set URL value
-        crl.setopt(crl.URL, self.url)
-
-        # Write bytes that are utf-8 encoded
-        crl.setopt(crl.WRITEDATA, b)
-
-        crl.perform() 
         crl.close()
 
-        # Get the content stored in the BytesIO object (in byte characters) 
-        body = b.getvalue()
-        
-        self.body = body
-
-        return self.body
+        return data 
 
     def __str__(self):
         return f"{self.method} : {self.url}"
@@ -136,10 +138,12 @@ if __name__ == "__main__":
     
     
     
-    test = "https://chrome.google.com/webstore/detail/web-scraper/jnhgnonknehpejjnehehllkliplmbmhn?hl=en"
-    request = Request(test)
-    response = request.get()
-    print(response)
+    test = "http://www.networkadvertising.org/choices/"
+    test_req = Request(test)
+    test_resp = test_req.get()
+    print(test_resp)
+    print(test_req.url)
+
     
     
     
