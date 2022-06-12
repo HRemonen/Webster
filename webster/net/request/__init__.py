@@ -112,8 +112,13 @@ class Request(object):
     
     def get(self) -> bytes:
         """
-        GET request.
-        Returns bytes of the request
+        Send GET request to server of the request class object.
+
+        Returns
+        -------
+        bytes
+            Website content.
+        
         """
         
         b = BytesIO() 
