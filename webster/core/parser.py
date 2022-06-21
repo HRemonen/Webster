@@ -36,8 +36,8 @@ class Parser:
                     "Expected response type of Request, instead got: "
                     , type(request))
         else: 
-            self.request = request
             
+            self.request = request
             self.extractor = lxml.html.fromstring(self.request.get())
             
         
@@ -62,17 +62,24 @@ class Parser:
             #if anchor is URL instead of relative path add it to the urls list.
             if validators.URLValidator(anchor):
                 url = anchor
-            #if anchor start with / it means it is relative path or sub domain
-
-            else:
-                url = urljoin(base_url, anchor)
                 
-            if url in urls:
-                    continue
-            else:
+            elif anchor.startswith("/"):
+                url = urljoin(base_url, anchor)
+            
+            else: url = None
+            
+            if url is None:
+                continue
+            
+            elif url not in urls:
                 urls.append(url)   
-
+                    
         return urls
 
 if __name__ == "__main__":
-    pass
+    url = "https://webscraper.io/test-sites"
+    request = Request(url)
+    
+    p = Parser(request)
+
+    print(p.parse_anchors())

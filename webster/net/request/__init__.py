@@ -1,7 +1,7 @@
 import pycurl
 
 from io import BytesIO 
-from typing import List, Optional, Union
+from typing import Optional
 from urllib.parse import urlparse
 
 from utils import validators
@@ -46,8 +46,6 @@ class Request(object):
         method: str = "GET",
         encoding: str = "utf-8",
         body: Optional[bytes] = None,
-        headers: Optional[dict] = None,
-        cookies: Optional[Union[dict, List[dict]]] = None,
     ) -> None:
         
         self._encoding = encoding

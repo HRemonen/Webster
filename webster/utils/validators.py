@@ -49,6 +49,7 @@ def URLValidator(url: list) -> bool:
         True if URL of accepted form.
     """
     def _validate(input: str) -> bool:
+
         return bool(re.match(
             r"(https?|ftp)://"          # protocol
             r"(\w+(\-\w+)*\.)?"         # host (optional)
@@ -70,4 +71,4 @@ def URLValidator(url: list) -> bool:
     
     
 if __name__ == "__main__":
-    pass
+    print(URLValidator("mailto:info@webscraper.io"))
