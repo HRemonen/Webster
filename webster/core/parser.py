@@ -59,6 +59,7 @@ class Parser:
         
         # find every <a> tag from file, with href attribute.
         for anchor in extractor_elements:
+            url = None
             #if anchor is URL instead of relative path add it to the urls list.
             if validators.URLValidator(anchor):
                 url = anchor
@@ -66,12 +67,7 @@ class Parser:
             elif anchor.startswith("/"):
                 url = urljoin(base_url, anchor)
             
-            else: url = None
-            
-            if url is None:
-                continue
-            
-            elif url not in urls:
+            if url is not None and url not in urls:
                 urls.append(url)   
                     
         return urls
