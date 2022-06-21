@@ -63,6 +63,8 @@ class Crawler:
         
         for url in urls:
             request = Request(url)
+ 
+            #Check if allowed url
             if self.allowed_urls is not None:
                 if any(url_tools.URLnetloc(request.url)
                     in url_tools.URLnetloc(s) for s in self.allowed_urls):
@@ -85,18 +87,12 @@ class Crawler:
             response_anchors = []
             
             for rqs in requests:
-                if rqs is not None:
-                    if rqs.url not in responses:
-                        print("Adding...", rqs.url)
-                        responses[rqs.url] = rqs
-                        try:
-                            response_anchors = Parser(rqs).parse_anchors()
-                        except Exception:
-                            #TODO: Check why sometimes request is empty.
-                            continue
-                    else: print("Skipping url,", rqs.url)
-                        
-                else: continue
+                if rqs.url not in responses:
+                    print("Adding, ", rqs)
+                    responses[rqs.url] = rqs
+                    response_anchors = Parser(rqs).parse_anchors()
+        
+                else: print("Skipping,", rqs)        
                 
             if response_anchors:
                 requests = self._start_requests(response_anchors)
@@ -121,7 +117,7 @@ if __name__ == "__main__":
     
     allowed = ["https://webscraper.io/"]
     
-    ws = Crawler(sites, allowed_urls=allowed)
+    ws = Crawler(sites)
     print(ws)
     xs = ws.crawl()
     
