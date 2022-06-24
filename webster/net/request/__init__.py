@@ -15,22 +15,27 @@ class Request(object):
     ----------
     url : str
         URL to request data from.
-        URL must be in correct form: ex. https://example.com/ or https://www.example.com/
+        URL must be in correct form: 
+        ex. https://example.com/ or https://www.example.com/
        
     method : str, default = "GET".
         Request method.
          
     headers : (Optional) dict, default = None.
-        HTTP request headers to be send with the request to the server.
+        HTTP request headers to be send 
+        with the request to the server.
 
     body : (Optional) bytes, default = None.
-        Request body. Will be stored as bytes, encoded using utf-8.
+        Request body. Will be stored as bytes, 
+        encoded using utf-8.
     
     cookies : (Optional) dict or list of dicts, default = None.
-        HTTP request cookies to be send with the request to the server.
+        HTTP request cookies to be send 
+        with the request to the server.
         
     encoding : str, default = "utf-8".
-        Encoding of request. Encoding is used to encode request body to bytes.
+        Encoding of request. Encoding is used to encode 
+        request body to bytes.
         Also allows for decoding bytes to string.
     
     Methods
@@ -59,7 +64,7 @@ class Request(object):
                 raise TypeError(
                     "Expected body type of bytes, instead got: "
                     , type(body))
-        else: self.body = None
+        else: self.body = self.__get()
         
     def _get_url(self) -> str:
         return self.url
@@ -68,11 +73,20 @@ class Request(object):
         if validators.URLValidator(url):
             return url
 
-    def _get_body(self) -> bytes:
+    def get(self) -> bytes:
+        """
+        Send GET request to server of the request class object.
+
+        Returns
+        -------
+        bytes
+            Website content.
+        """
         return self.body
     
-    def _get_body_string(self) -> str:
+    def text(self) -> str:
         return self.body.decode(self._encoding)
+    
 
     def base_url(self) -> str:
         """
@@ -93,15 +107,11 @@ class Request(object):
         return base_url
     
     
-    def get(self):
+    def __get(self):
         """
-        Send GET request to server of the request class object.
-
-        Returns
-        -------
-        bytes
-            Website content.
+        Helper function for request.get()
         
+        This actually is where the magic happens.
         """
 
         data = None

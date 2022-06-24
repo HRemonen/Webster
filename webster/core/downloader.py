@@ -1,7 +1,9 @@
 import os
-import requests
 
 from datetime import datetime
+
+from net.request import Request
+
     
 ###########################--SETTINGS--###########################
 
@@ -9,25 +11,28 @@ NOW = datetime.now()
 DL_DIR = "downloads/html/"
 
 #Create downloads folder with todays date (check from above).
-#Folder is then used (Parser module) to store downloaded html and data (JSON) files.
+#Folder is then used (Parser module) to store downloaded html 
+#and data (JSON) files.
 
 ###########################-/SETTINGS/-###########################
+
 class Downloader:
     """
-    A class that represents Downloader module used to download 
-    webpages and saving webpages in html format.
+    A class that represents Downloader module 
+    used to download webpages and saving 
+    webpages in html format.
     
     Attributes
     ----------
-    response : object
-        Response object.
+    request : object
+        Request object.
     
     Methods
     -------
     download()
         Downloads site content and saves the content as html file.  
     """
-    def __init__(self, response: object) -> None:
+    def __init__(self, request: object) -> None:
         """
         Parameters
         ----------
@@ -35,30 +40,35 @@ class Downloader:
             Response object of the URL to download.   
         """
         
-        if not isinstance(response, requests.Response):
+        if not isinstance(request, Request):
             raise TypeError(
-                    "Expected response type of requests.Response, instead got: "
-                    , type(response))
+                "Expected response type of Request, instead got: "
+                , type(request))
         else:
-            self.response = response
-            self.filename = response.url.split("//")[1].replace("/", "") + ".html"   
-            self.filepath = os.path.join(DL_DIR, self.filename)
+            
+            self.request = request
+            self.filename = request.url.split(
+                "//")[1].replace(
+                "/", "") + ".html"   
+            self.filepath = os.path.join(
+                DL_DIR, self.filename)
+            
             try:
                 os.makedirs(DL_DIR)
             except FileExistsError:
-                pass
+                pass #Folder already exists not a big deal
               
-    def get_downloader_response(self):
-        return self._response
+    def get_request(self):
+        return self.request
     
     def get_filename(self):
-        return self._filename
+        return self.filename
     
     def get_filepath(self):
-        return self._filepath
+        return self.filepath
     
     def __str__(self):
-        return self._filename
+        return self.filename
         
     __repr__= __str__
         
@@ -71,10 +81,10 @@ class Downloader:
         try:       
             if not os.path.isfile(self.filepath):
                 with open(self.filepath, 'w') as file:
-                    file.write(self.response.url+"\n\n")
+                    file.write(self.request.url+"\n\n")
                     file.write("File downloaded: ")
                     file.write(NOW.strftime("%d-%m-%Y, %H:%M:%S")+"\n\n")
-                    file.write(self.response.text)
+                    file.write(self.request.text())
 
             #If the file already exists, raise error
             else: raise FileExistsError
@@ -82,9 +92,10 @@ class Downloader:
             print("File exists already...")
         
 if __name__ == "__main__":
-    response = requests.get("https://www.google.com/")
+    url = "https://webscraper.io/test-sites"
+    request = Request(url)
     
-    d = Downloader(response)
+    d = Downloader(request)
     d.download()
 
 
