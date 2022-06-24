@@ -110,7 +110,9 @@ if __name__ == "__main__":
     #ws1.run()
     #ws1 = WebSurfer("https://google.com/")
     sites = [ 
-            "https://webscraper.io/test-sites",  
+            "https://webscraper.io/test-sites",
+            "https://webscraper.io/test-sites", 
+            "https://webscraper.io/test-sites", 
             ]
     empty = []
     

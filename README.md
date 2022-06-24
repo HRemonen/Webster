@@ -1,106 +1,63 @@
-# Websurfer
+# Webster
 
-Websurfer is a Python library for downloading pages and crawling websites for information.
+Webster is a python web scraping framework. Simple use, happy days.
 
 ## Installation
 
-Install packages using configuration file requirements.txt
-
-To install packages using pip:
+NotImplemented
+pip installation inc.
 
 ```bash
-pip install -r requirements.txt
+pip install webster
 ```
 
-## Usage 
-### Site_downloader module
+## Creating new Crawler instance
 
 ```python
-#Using site downloader:
-site="https://example.io/"
-s1 = download_site(site)
+from webster.crawler import Crawler
 
-#or you could just
-download_site("https://example.io/contact")
+#Make a list of websites to start crawling from.
+    #Atleast provide 1 starting URL.
+    sites = [ 
+            "https://site1.io",
+            "https://site2.io", 
+            "https://site3.io", 
+            ]
 
-```
---> 
-This creates "downloaded" dir inside project folder.
-downloaded folder contains directories with name of download date
-ex.
+#Define allowed urls to scrape (Optional):
+    #If no allowed urls are provided the crawler 
+    #starts wide crawls. Meaning it wont stop 
+    #until there is no more sites
 
-```
-+-- project_folder
-│
-+---+-- downloaded
-│   │ 
-│   +---+-- ex. 11-8-2021
-│       │        
-│       +--  example.io.html
-│       +--  example.io.contacts.html
-│       .  
-│       . 
-│       .   
-+---+-- site_tools
-│   │
-│   +-- site_downloader.py
-│   +-- site_parser.py
-│   .
-│   .
-│   .
-+-- README.md
-+-- requirements.txt
-```
-
-### Site_parser module
-
-```python
-#Creating new site_parser. This opens file navigator to select the file to parse
-p = site_parser.Parser()
-
-#Creating the dataset from the file
-data = p.create_dataset()
+    allowed = ["https://site.io"]
+    
+# Create new Crawler instance:
+    my_crawler = Crawler(
+                    sites, 
+                    allowed_urls=allowed
+                 )
 
 ```
 
-#### create_dataset(). Creates a dataset from the file. This dataset contains:
 
-```python
-dataset = {
-    "filepath" : string / path, #filepath,
-    "website URL" : string, #site url,
-    "title" : string, #site title,
-    "keywords" : list, #keywords or "None",
-    "description" : string, #description or "None",
-    "links" : list, #all <a> tag elements in file
-    }
-```
-##### For example you could iterate through every link in the file and download the sites:
 
-```python
-for site in data["links"]:
-    site_downloader.download_site(site)
-```
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
 
 ## License
-MIT License
+BSD 3-Clause License
 
-Copyright (c) 2021, Henri Juhani Remonen
+Copyright (c) 2022, Henri Remonen.
+All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
