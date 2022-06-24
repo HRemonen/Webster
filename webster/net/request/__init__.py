@@ -20,18 +20,10 @@ class Request(object):
        
     method : str, default = "GET".
         Request method.
-         
-    headers : (Optional) dict, default = None.
-        HTTP request headers to be send 
-        with the request to the server.
 
     body : (Optional) bytes, default = None.
         Request body. Will be stored as bytes, 
         encoded using utf-8.
-    
-    cookies : (Optional) dict or list of dicts, default = None.
-        HTTP request cookies to be send 
-        with the request to the server.
         
     encoding : str, default = "utf-8".
         Encoding of request. Encoding is used to encode 
@@ -56,6 +48,7 @@ class Request(object):
         self._encoding = encoding
         self.method = str(method).upper()
         self.url = self._set_url(url)
+        self.status_code = None
         
         if body is not None:
             if isinstance(body, bytes):
@@ -120,8 +113,8 @@ class Request(object):
         crl = pycurl.Curl()
         crl.setopt(pycurl.URL, self.url)
         crl.setopt(pycurl.FOLLOWLOCATION, 1)
-        crl.setopt(pycurl.CONNECTTIMEOUT, 5)
-        crl.setopt(pycurl.TIMEOUT, 8)
+        crl.setopt(pycurl.CONNECTTIMEOUT, 20)
+        crl.setopt(pycurl.TIMEOUT, 20)
         crl.setopt(pycurl.WRITEDATA, b)
 
         try:
@@ -130,27 +123,27 @@ class Request(object):
         except Exception:
             return data
         
+        self.status_code = crl.getinfo(pycurl.HTTP_CODE)
         crl.close()
-
+        
         return data 
 
     def __str__(self):
-        return f"{self.method} : {self.url}"
+        return f"({self.status_code}) <{self.method} : {self.url}>"
 
     __repr__ = __str__
 
 if __name__ == "__main__":
     url = "https://webscraper.io/test-sites"
     request = Request(url)
-    print(request.base_url())
+    print(request)
     
     
     
     test = "http://www.networkadvertising.org/choices/"
     test_req = Request(test)
-    test_resp = test_req.get()
-    print(test_resp)
-    print(test_req.url)
+    print(test_req)
+
 
     
     
