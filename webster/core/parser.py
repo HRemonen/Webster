@@ -9,13 +9,13 @@ from net.request import Request
 
 class Parser:
     """
-    A class that represents Parser module used to parse 
-    response objects. 
+    A class that represents Parser module 
+    used to parse request objects. 
     
     Attributes
     ----------
-    response : object
-        Response object.
+    request : object
+        Request object.
     
     Methods
     -------
@@ -33,8 +33,8 @@ class Parser:
         
         if not isinstance(request, Request):
             raise TypeError(
-                    "Expected response type of Request, instead got: "
-                    , type(request))
+                "Expected response type of Request, instead got: "
+                , type(request))
         else: 
             
             self.request = request
@@ -43,12 +43,14 @@ class Parser:
         
     def parse_anchors(self) -> list:
         """
-        Parses anchors from the file / response object and return anchor list.  
+        Parses anchors from the file 
+        / response object and return anchor list.  
     
         Returns
         -------
         list
-            a list of parsed anchors, or subURLs found in the website.
+            a list of parsed anchors, 
+            or subURLs found in the website.
     
         """
         
