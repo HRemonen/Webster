@@ -55,6 +55,7 @@ class Crawler:
         else: self.allowed_urls = None
         
         self.crawling = False
+        self.responses = {}
     
     def _start_requests(self, urls: list) -> object:
         """
@@ -75,8 +76,7 @@ class Crawler:
         """
         Crawl domains to get response objects.
         """
-        
-        responses = {}
+
         requests = iter(self._start_requests(self.start_urls))
         response_anchors = []
         
@@ -86,9 +86,9 @@ class Crawler:
         
         while self.crawling:
             for rqs in requests:
-                if rqs.url not in responses:
+                if rqs.url not in self.responses:
                     print("Crawled ", rqs)
-                    responses[rqs.url] = rqs
+                    self.responses[rqs.url] = rqs
                     response_anchors = Parser(rqs).parse_anchors()
                 
                 else: print("Skipped ", rqs)        
@@ -99,7 +99,7 @@ class Crawler:
                 print("Nothing to crawl. Exiting crawler.")
                 self.crawling = False
             
-        return responses
+        return self.responses
     
     def __str__(self):
         return f"Crawler: " + str(self._ID)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     
     allowed = ["https://webscraper.io/"]
     
-    ws = Crawler(sites)
+    ws = Crawler(sites, allowed_urls=allowed)
     print(ws)
     xs = ws.crawl()
     
