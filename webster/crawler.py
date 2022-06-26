@@ -87,14 +87,23 @@ class Crawler:
         while self.crawling:
             for rqs in requests:
                 if rqs.url not in self.responses:
-                    print("Crawled ", rqs)
+                    print(f"{self} Crawled {rqs}")
                     self.responses[rqs.url] = rqs
                     response_anchors = Parser(rqs).parse_anchors()
                 
-                else: print("Skipped ", rqs)        
+                else: print(f"{self} Skipped {rqs}")      
                     
             if response_anchors:
-                requests = iter(self._start_requests(response_anchors))
+                new_anchors = []
+                for resp in response_anchors:
+                    if resp not in self.responses:
+                        new_anchors.append(resp)
+                        
+                requests = iter(self._start_requests(new_anchors))
+                
+                #Reset response anchors to contain no items
+                response_anchors = []
+                
             else:
                 print("Nothing to crawl. Exiting crawler.")
                 self.crawling = False

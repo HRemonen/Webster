@@ -113,15 +113,12 @@ class Request(object):
         crl = pycurl.Curl()
         crl.setopt(pycurl.URL, self.url)
         crl.setopt(pycurl.FOLLOWLOCATION, 1)
-        crl.setopt(pycurl.CONNECTTIMEOUT, 20)
-        crl.setopt(pycurl.TIMEOUT, 20)
+        crl.setopt(pycurl.CONNECTTIMEOUT, 5)
+        crl.setopt(pycurl.TIMEOUT, 8)
         crl.setopt(pycurl.WRITEDATA, b)
 
-        try:
-            crl.perform()
-            data = b.getvalue()
-        except Exception:
-            return data
+        crl.perform()
+        data = b.getvalue()
         
         self.status_code = crl.getinfo(pycurl.HTTP_CODE)
         crl.close()
