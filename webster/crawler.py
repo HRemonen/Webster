@@ -1,4 +1,7 @@
 import uuid
+import queue
+
+from concurrent.futures import ThreadPoolExecutor
 
 from typing import Optional
 
@@ -55,11 +58,33 @@ class Crawler:
         else: self.allowed_urls = None
         
         self.crawling = False
+        self.pool = ThreadPoolExecutor(max_workers=100)
+        
+        self.queue = queue.Queue()
         self.responses = {}
     
-    def _start_requests(self, urls: list) -> object:
+    def crawl(self) -> None:
         """
-        Start requesting urls from the starting urls.
+        Crawl domains to get response objects.
+        """
+        if self.crawling:
+            raise RuntimeError("Already crawling!")
+        self.crawling = True
+        
+        self._start_requests(self.start_urls)
+             
+        while self.crawling:
+            if self.queue.empty():
+                self.crawling = False
+            
+            self._crawl(self.queue.get())
+                   
+        return self.responses
+    
+    def _start_requests(self, urls: list) -> None:
+        """
+        Start requesting from the given URLs.
+        Put requests to the queue for the crawler to use.
         """
         
         for url in urls:
@@ -69,55 +94,40 @@ class Crawler:
             if self.allowed_urls is not None:
                 if any(url_tools.URLnetloc(request.url)
                     in url_tools.URLnetloc(s) for s in self.allowed_urls):
-                    yield request
-            else: yield request
+                    self.queue.put(request)
+            else: self.queue.put(request)
     
-    def crawl(self) -> None:
+    def _crawl(self, rqs):
         """
-        Crawl domains to get response objects.
+        Helper function for crawling.
+        
+        Parse request for new URLs or anchors.
+        Start requesting new URLs.
         """
-
-        requests = iter(self._start_requests(self.start_urls))
+        
         response_anchors = []
-        
-        if self.crawling:
-                raise RuntimeError("Already crawling!")
-        self.crawling = True
-        
-        while self.crawling:
-            for rqs in requests:
-                if rqs.url not in self.responses:
-                    print(f"{self} Crawled {rqs}")
-                    self.responses[rqs.url] = rqs
-                    response_anchors = Parser(rqs).parse_anchors()
-                
-                else: print(f"{self} Skipped {rqs}")      
-                    
-            if response_anchors:
-                new_anchors = []
-                for resp in response_anchors:
-                    if resp not in self.responses:
-                        new_anchors.append(resp)
+        if rqs.url not in self.responses:
+                print(f"{self} Crawled {rqs}")
+                self.responses[rqs.url] = rqs
+                response_anchors = Parser(rqs).parse_anchors()
+        else: print(f"{self} Skipped {rqs}")      
                         
-                requests = iter(self._start_requests(new_anchors))
-                
-                #Reset response anchors to contain no items
-                response_anchors = []
-                
-            else:
-                print("Nothing to crawl. Exiting crawler.")
-                self.crawling = False
-            
-        return self.responses
+        new_URLs = []
+        if response_anchors:
+            for resp in response_anchors:
+                if resp not in self.responses:
+                     new_URLs.append(resp)
+        
+        if new_URLs:
+            self._start_requests(new_URLs)               
     
     def __str__(self):
         return f"Crawler: " + str(self._ID)
         
     
 if __name__ == "__main__":
-    #ws1 = Interface("https://google.com/")
-    #ws1.run()
-    #ws1 = WebSurfer("https://google.com/")
+
+    ws = Crawler(["https://google.com/"])
     sites = [ 
             "https://webscraper.io/test-sites",
             "https://webscraper.io/test-sites", 
@@ -127,7 +137,7 @@ if __name__ == "__main__":
     
     allowed = ["https://webscraper.io/"]
     
-    ws = Crawler(sites, allowed_urls=allowed)
+    #ws = Crawler(sites, allowed_urls=allowed)
     print(ws)
     xs = ws.crawl()
     
