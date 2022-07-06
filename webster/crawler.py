@@ -55,6 +55,7 @@ class Crawler:
         else: self.allowed_urls = None
         
         self.crawling = False
+        self.responses = {}
     
     def _start_requests(self, urls: list) -> object:
         """
@@ -75,8 +76,7 @@ class Crawler:
         """
         Crawl domains to get response objects.
         """
-        
-        responses = {}
+
         requests = iter(self._start_requests(self.start_urls))
         response_anchors = []
         
@@ -86,20 +86,29 @@ class Crawler:
         
         while self.crawling:
             for rqs in requests:
-                if rqs.url not in responses:
-                    print("Adding, ", rqs)
-                    responses[rqs.url] = rqs
+                if rqs.url not in self.responses:
+                    print(f"{self} Crawled {rqs}")
+                    self.responses[rqs.url] = rqs
                     response_anchors = Parser(rqs).parse_anchors()
                 
-                else: print("Skipping,", rqs)        
+                else: print(f"{self} Skipped {rqs}")      
                     
             if response_anchors:
-                requests = iter(self._start_requests(response_anchors))
+                new_anchors = []
+                for resp in response_anchors:
+                    if resp not in self.responses:
+                        new_anchors.append(resp)
+                        
+                requests = iter(self._start_requests(new_anchors))
+                
+                #Reset response anchors to contain no items
+                response_anchors = []
+                
             else:
                 print("Nothing to crawl. Exiting crawler.")
                 self.crawling = False
             
-        return responses
+        return self.responses
     
     def __str__(self):
         return f"Crawler: " + str(self._ID)
@@ -118,7 +127,7 @@ if __name__ == "__main__":
     
     allowed = ["https://webscraper.io/"]
     
-    ws = Crawler(sites)
+    ws = Crawler(sites, allowed_urls=allowed)
     print(ws)
     xs = ws.crawl()
     

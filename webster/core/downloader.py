@@ -1,20 +1,7 @@
 import os
 
-from datetime import datetime
-
+from conf import settings
 from net.request import Request
-
-    
-###########################--SETTINGS--###########################
-
-NOW = datetime.now()
-DL_DIR = "downloads/html/"
-
-#Create downloads folder with todays date (check from above).
-#Folder is then used (Parser module) to store downloaded html 
-#and data (JSON) files.
-
-###########################-/SETTINGS/-###########################
 
 class Downloader:
     """
@@ -50,11 +37,11 @@ class Downloader:
             self.filename = request.url.split(
                 "//")[1].replace(
                 "/", "") + ".html"   
-            self.filepath = os.path.join(
-                DL_DIR, self.filename)
+            self.filepath = settings.PATH.join(
+                settings.DL_DIR, self.filename)
             
             try:
-                os.makedirs(DL_DIR)
+                os.makedirs(settings.DL_DIR)
             except FileExistsError:
                 pass #Folder already exists not a big deal
               
@@ -79,11 +66,11 @@ class Downloader:
 
         #Try to save the file in DL_DIR folder
         try:       
-            if not os.path.isfile(self.filepath):
+            if not settings.PATH.isfile(self.filepath):
                 with open(self.filepath, 'w') as file:
                     file.write(self.request.url+"\n\n")
                     file.write("File downloaded: ")
-                    file.write(NOW.strftime("%d-%m-%Y, %H:%M:%S")+"\n\n")
+                    file.write(settings.TIME_NOW.strftime("%d-%m-%Y, %H:%M:%S")+"\n\n")
                     file.write(self.request.text())
 
             #If the file already exists, raise error
