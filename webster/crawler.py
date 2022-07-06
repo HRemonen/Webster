@@ -77,7 +77,8 @@ class Crawler:
             print("Queue size:", self.queue.qsize())
             next_request = self.queue.get()
             
-            self._crawl(next_request)
+            if next_request is not None:
+                self._crawl(next_request)
             
             if self.queue.empty():
                 self.crawling = False
@@ -91,13 +92,15 @@ class Crawler:
         """
         def _request(url: str) -> Request:
             request = Request(url)
-
-            #Check if allowed url
-            if self.allowed_urls is None:
-                return request
-            elif any(url_tools.URLnetloc(request.url)
-                in url_tools.URLnetloc(s) for s in self.allowed_urls):
-                return request
+            
+            if request.url not in self.responses:
+                self.responses[request.url] = request
+                #Check if allowed url
+                if self.allowed_urls is None:
+                    return request
+                elif any(url_tools.URLnetloc(request.url)
+                    in url_tools.URLnetloc(s) for s in self.allowed_urls):
+                    return request
             
         requests = self.pool.map(lambda url : _request(url), urls)
         self.pool.map(self.queue.put, requests)
@@ -109,13 +112,11 @@ class Crawler:
         Parse request for new URLs or anchors.
         Start requesting new URLs.
         """
-        
-        response_anchors = []
-        if rqs.url not in self.responses:
-                print(f"{self} Crawled {rqs}")
-                self.responses[rqs.url] = rqs
-                response_anchors = Parser(rqs).parse_anchors()
-        else: print(f"{self} Skipped {rqs}")      
+    
+        print(f"{self} Crawled {rqs}")
+                
+        response_anchors = Parser(rqs).parse_anchors()
+
                         
         new_URLs = []
         if response_anchors:
