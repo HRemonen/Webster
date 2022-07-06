@@ -58,7 +58,7 @@ class Crawler:
         else: self.allowed_urls = None
         
         self.crawling = False
-        self.pool = ThreadPoolExecutor(max_workers=100)
+        self.pool = ThreadPoolExecutor()
         
         self.queue = queue.Queue()
         self.responses = {}
@@ -74,11 +74,14 @@ class Crawler:
         self._start_requests(self.start_urls)
              
         while self.crawling:
+            print("Queue size:", self.queue.qsize())
+            next_request = self.queue.get()
+            
+            self._crawl(next_request)
+            
             if self.queue.empty():
                 self.crawling = False
             
-            self._crawl(self.queue.get())
-                   
         return self.responses
     
     def _start_requests(self, urls: list) -> None:
@@ -86,16 +89,18 @@ class Crawler:
         Start requesting from the given URLs.
         Put requests to the queue for the crawler to use.
         """
-        
-        for url in urls:
+        def _request(url: str) -> Request:
             request = Request(url)
- 
+
             #Check if allowed url
-            if self.allowed_urls is not None:
-                if any(url_tools.URLnetloc(request.url)
-                    in url_tools.URLnetloc(s) for s in self.allowed_urls):
-                    self.queue.put(request)
-            else: self.queue.put(request)
+            if self.allowed_urls is None:
+                return request
+            elif any(url_tools.URLnetloc(request.url)
+                in url_tools.URLnetloc(s) for s in self.allowed_urls):
+                return request
+            
+        requests = self.pool.map(lambda url : _request(url), urls)
+        self.pool.map(self.queue.put, requests)
     
     def _crawl(self, rqs):
         """
@@ -127,7 +132,7 @@ class Crawler:
     
 if __name__ == "__main__":
 
-    ws = Crawler(["https://google.com/"])
+    #ws = Crawler(["https://google.com/"])
     sites = [ 
             "https://webscraper.io/test-sites",
             "https://webscraper.io/test-sites", 
@@ -137,7 +142,8 @@ if __name__ == "__main__":
     
     allowed = ["https://webscraper.io/"]
     
-    #ws = Crawler(sites, allowed_urls=allowed)
+    ws = Crawler(sites, allowed_urls=allowed)
+    
     print(ws)
     xs = ws.crawl()
     

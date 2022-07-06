@@ -117,7 +117,11 @@ class Request(object):
         crl.setopt(pycurl.TIMEOUT, 8)
         crl.setopt(pycurl.WRITEDATA, b)
 
-        crl.perform()
+        try:
+            crl.perform()
+        except pycurl.error:
+            return data
+        
         data = b.getvalue()
         
         self.status_code = crl.getinfo(pycurl.HTTP_CODE)
