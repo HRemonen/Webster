@@ -36,6 +36,8 @@ class Crawler:
     
     """
     
+    
+    
     def __init__(self, 
                 start_urls: list,
                 allowed_urls: Optional[list] = None,
@@ -63,20 +65,25 @@ class Crawler:
         self.queue = queue.Queue()
         self.responses = {}
     
+    
+    
     def crawl(self) -> None:
         """
         Crawl domains to get response objects.
         """
+        
         if self.crawling:
             raise RuntimeError("Already crawling!")
         self.crawling = True
         
+        #Get requests to queue
         self._start_requests(self.start_urls)
              
         while self.crawling:
             print("Queue size:", self.queue.qsize())
             next_request = self.queue.get()
             
+            #Check for bogus requests
             if next_request is not None:
                 self._crawl(next_request)
             
@@ -84,6 +91,8 @@ class Crawler:
                 self.crawling = False
             
         return self.responses
+    
+    
     
     def _start_requests(self, urls: list) -> None:
         """
@@ -95,17 +104,23 @@ class Crawler:
             
             if request.url not in self.responses:
                 self.responses[request.url] = request
+                
                 #Check if allowed url
                 if self.allowed_urls is None:
                     return request
                 elif any(url_tools.URLnetloc(request.url)
-                    in url_tools.URLnetloc(s) for s in self.allowed_urls):
+                        in url_tools.URLnetloc(s) 
+                        for s 
+                        in self.allowed_urls):
                     return request
             
         requests = self.pool.map(lambda url : _request(url), urls)
+        
         self.pool.map(self.queue.put, requests)
     
-    def _crawl(self, rqs):
+    
+    
+    def _crawl(self, rqs: Request):
         """
         Helper function for crawling.
         
@@ -114,22 +129,25 @@ class Crawler:
         """
     
         print(f"{self} Crawled {rqs}")
-                
-        response_anchors = Parser(rqs).parse_anchors()
-
-                        
-        new_URLs = []
-        if response_anchors:
-            for resp in response_anchors:
-                if resp not in self.responses:
-                     new_URLs.append(resp)
         
-        if new_URLs:
-            self._start_requests(new_URLs)               
+        try:
+            response_anchors = Parser(rqs).parse_anchors()
+            new_URLs = []
+            if response_anchors:
+                for resp in response_anchors:
+                    if resp not in self.responses:
+                        new_URLs.append(resp)
+            
+            if new_URLs:
+                self._start_requests(new_URLs) 
+        except TypeError:
+            pass
+                              
     
     def __str__(self):
         return f"Crawler: " + str(self._ID)
         
+    
     
 if __name__ == "__main__":
 

@@ -38,7 +38,9 @@ class Parser:
         else: 
             
             self.request = request
-            self.extractor = lxml.html.fromstring(self.request.get())
+            self.response = self.request.get()
+            if self.response is not None:
+                self.extractor = lxml.html.fromstring(self.response)
             
         
     def parse_anchors(self) -> list:
@@ -53,6 +55,8 @@ class Parser:
             or subURLs found in the website.
     
         """
+        if self.response is None:
+            raise TypeError("Response body is missing.")
         
         urls = [] 
           

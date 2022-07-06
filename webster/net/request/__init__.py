@@ -141,7 +141,7 @@ if __name__ == "__main__":
     
     
     
-    test = "http://www.networkadvertising.org/choices/"
+    test = "https://webscraper.io/documentation"
     test_req = Request(test)
     print(test_req)
 
