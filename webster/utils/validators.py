@@ -29,6 +29,8 @@ def ModeValidator(mode: str) -> bool:
                     "Expected Mode type of string, instead got: "
                     , type(mode))
 
+
+
 def URLValidator(url: list) -> bool:
     """
     Validates the URL or list of URLs

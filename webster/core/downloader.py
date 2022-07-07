@@ -3,6 +3,7 @@ import os
 from conf import settings
 from net.request import Request
 
+
 class Downloader:
     """
     A class that represents Downloader module 
@@ -44,20 +45,30 @@ class Downloader:
                 os.makedirs(settings.DL_DIR)
             except FileExistsError:
                 pass #Folder already exists not a big deal
+          
+          
               
     def get_request(self):
         return self.request
     
+    
+    
     def get_filename(self):
         return self.filename
+    
+    
     
     def get_filepath(self):
         return self.filepath
     
+    
+    
     def __str__(self):
         return self.filename
-        
+          
     __repr__= __str__
+       
+       
         
     def download(self) -> None:
         """
@@ -77,6 +88,8 @@ class Downloader:
             else: raise FileExistsError
         except FileExistsError:
             print("File exists already...")
+        
+        
         
 if __name__ == "__main__":
     url = "https://webscraper.io/test-sites"

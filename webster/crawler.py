@@ -11,6 +11,7 @@ from utils import url_tools
 from net.request import Request
 from core.parser import Parser
 
+
 class Crawler:
     """
     A class that represents crawler object used to crawl websites.
@@ -36,9 +37,6 @@ class Crawler:
         Starts crawler with given starting points.
     
     """
-    
-    
-    
     def __init__(self, 
                 start_urls: list,
                 allowed_urls: Optional[list] = None,
@@ -64,7 +62,7 @@ class Crawler:
         
         self.queue = queue.Queue()
         self.responses = {}
-    
+
     
     
     def crawl(self) -> None:
@@ -157,6 +155,7 @@ class Crawler:
             #Webster.Parser module raises TypeError if body is None.
             pass
                               
+    
     
     def __str__(self):
         return f"Crawler: " + str(self._ID)
