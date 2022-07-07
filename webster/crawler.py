@@ -69,7 +69,7 @@ class Crawler:
     
     def crawl(self) -> None:
         """
-        Crawl domains to get response objects.
+        Crawl domains to get Crawler.Request objects.
         """
         
         if self.crawling:
@@ -97,9 +97,17 @@ class Crawler:
     def _start_requests(self, urls: list) -> None:
         """
         Start requesting from the given URLs.
-        Put requests to the queue for the crawler to use.
+        Send Requests to ThreadPool and execute them using threading.
+        
+        Put Webster.Request objects to queue.
         """
         def _request(url: str) -> Request:
+            """
+            Helper function for making get requests.
+            
+            Checks if request is already made to this URL.
+            """
+            
             request = Request(url)
             
             if request.url not in self.responses:
@@ -113,7 +121,8 @@ class Crawler:
                         for s 
                         in self.allowed_urls):
                     return request
-            
+        
+        #Add requests to ThreadPool    
         requests = self.pool.map(lambda url : _request(url), urls)
         
         self.pool.map(self.queue.put, requests)
@@ -133,6 +142,7 @@ class Crawler:
         try:
             response_anchors = Parser(rqs).parse_anchors()
             new_URLs = []
+            
             if response_anchors:
                 for resp in response_anchors:
                     if resp not in self.responses:
@@ -141,6 +151,9 @@ class Crawler:
             if new_URLs:
                 self._start_requests(new_URLs) 
         except TypeError:
+            #Skip invalid requests where Webster.Request.body is None
+            #and thus cannot be parsed.
+            #Webster.Parser module raises TypeError if body is None.
             pass
                               
     

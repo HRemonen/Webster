@@ -77,6 +77,9 @@ class Parser:
                 urls.append(url)   
                     
         return urls
+    
+    def parse_elements(self, elements: list):
+        raise NotImplementedError
 
 if __name__ == "__main__":
     url = "https://webscraper.io/test-sites"

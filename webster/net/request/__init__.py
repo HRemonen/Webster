@@ -120,6 +120,9 @@ class Request(object):
         try:
             crl.perform()
         except pycurl.error:
+            #Something went wrong requesting.
+            #Could be connectiontimeout or other stuff
+            #Return None
             return data
         
         data = b.getvalue()
