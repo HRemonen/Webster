@@ -117,7 +117,14 @@ class Request(object):
         crl.setopt(pycurl.TIMEOUT, 8)
         crl.setopt(pycurl.WRITEDATA, b)
 
-        crl.perform()
+        try:
+            crl.perform()
+        except pycurl.error:
+            #Something went wrong requesting.
+            #Could be connectiontimeout or other stuff
+            #Return None
+            return data
+        
         data = b.getvalue()
         
         self.status_code = crl.getinfo(pycurl.HTTP_CODE)
@@ -137,7 +144,7 @@ if __name__ == "__main__":
     
     
     
-    test = "http://www.networkadvertising.org/choices/"
+    test = "https://webscraper.io/documentation"
     test_req = Request(test)
     print(test_req)
 

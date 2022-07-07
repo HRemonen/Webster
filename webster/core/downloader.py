@@ -19,7 +19,7 @@ class Downloader:
     download()
         Downloads site content and saves the content as html file.  
     """
-    def __init__(self, request: object) -> None:
+    def __init__(self, request: Request) -> None:
         """
         Parameters
         ----------

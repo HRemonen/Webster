@@ -1,4 +1,7 @@
 import uuid
+import queue
+
+from concurrent.futures import ThreadPoolExecutor
 
 from typing import Optional
 
@@ -33,6 +36,8 @@ class Crawler:
     
     """
     
+    
+    
     def __init__(self, 
                 start_urls: list,
                 allowed_urls: Optional[list] = None,
@@ -55,69 +60,111 @@ class Crawler:
         else: self.allowed_urls = None
         
         self.crawling = False
+        self.pool = ThreadPoolExecutor()
+        
+        self.queue = queue.Queue()
         self.responses = {}
     
-    def _start_requests(self, urls: list) -> object:
-        """
-        Start requesting urls from the starting urls.
-        """
-        
-        for url in urls:
-            request = Request(url)
- 
-            #Check if allowed url
-            if self.allowed_urls is not None:
-                if any(url_tools.URLnetloc(request.url)
-                    in url_tools.URLnetloc(s) for s in self.allowed_urls):
-                    yield request
-            else: yield request
+    
     
     def crawl(self) -> None:
         """
-        Crawl domains to get response objects.
+        Crawl domains to get Crawler.Request objects.
         """
-
-        requests = iter(self._start_requests(self.start_urls))
-        response_anchors = []
         
         if self.crawling:
-                raise RuntimeError("Already crawling!")
+            raise RuntimeError("Already crawling!")
         self.crawling = True
         
+        #Get requests to queue
+        self._start_requests(self.start_urls)
+             
         while self.crawling:
-            for rqs in requests:
-                if rqs.url not in self.responses:
-                    print(f"{self} Crawled {rqs}")
-                    self.responses[rqs.url] = rqs
-                    response_anchors = Parser(rqs).parse_anchors()
-                
-                else: print(f"{self} Skipped {rqs}")      
-                    
-            if response_anchors:
-                new_anchors = []
-                for resp in response_anchors:
-                    if resp not in self.responses:
-                        new_anchors.append(resp)
-                        
-                requests = iter(self._start_requests(new_anchors))
-                
-                #Reset response anchors to contain no items
-                response_anchors = []
-                
-            else:
-                print("Nothing to crawl. Exiting crawler.")
+            print("Queue size:", self.queue.qsize())
+            next_request = self.queue.get()
+            
+            #Check for bogus requests
+            if next_request is not None:
+                self._crawl(next_request)
+            
+            if self.queue.empty():
                 self.crawling = False
             
         return self.responses
+    
+    
+    
+    def _start_requests(self, urls: list) -> None:
+        """
+        Start requesting from the given URLs.
+        Send Requests to ThreadPool and execute them using threading.
+        
+        Put Webster.Request objects to queue.
+        """
+        def _request(url: str) -> Request:
+            """
+            Helper function for making get requests.
+            
+            Checks if request is already made to this URL.
+            """
+            
+            request = Request(url)
+            
+            if request.url not in self.responses:
+                self.responses[request.url] = request
+                
+                #Check if allowed url
+                if self.allowed_urls is None:
+                    return request
+                elif any(url_tools.URLnetloc(request.url)
+                        in url_tools.URLnetloc(s) 
+                        for s 
+                        in self.allowed_urls):
+                    return request
+        
+        #Add requests to ThreadPool    
+        requests = self.pool.map(lambda url : _request(url), urls)
+        
+        self.pool.map(self.queue.put, requests)
+    
+    
+    
+    def _crawl(self, rqs: Request):
+        """
+        Helper function for crawling.
+        
+        Parse request for new URLs or anchors.
+        Start requesting new URLs.
+        """
+    
+        print(f"{self} Crawled {rqs}")
+        
+        try:
+            response_anchors = Parser(rqs).parse_anchors()
+            new_URLs = []
+            
+            if response_anchors:
+                for resp in response_anchors:
+                    if resp not in self.responses:
+                        new_URLs.append(resp)
+            
+            if new_URLs:
+                self._start_requests(new_URLs) 
+        except TypeError:
+            #Skip invalid requests where Webster.Request.body is None
+            #and thus cannot be parsed.
+            #Webster.Parser module raises TypeError if body is None.
+            pass
+                              
     
     def __str__(self):
         return f"Crawler: " + str(self._ID)
         
     
+    
 if __name__ == "__main__":
-    #ws1 = Interface("https://google.com/")
-    #ws1.run()
-    #ws1 = WebSurfer("https://google.com/")
+
+    #ws = Crawler(["https://google.com/"])
     sites = [ 
             "https://webscraper.io/test-sites",
             "https://webscraper.io/test-sites", 
@@ -128,6 +175,7 @@ if __name__ == "__main__":
     allowed = ["https://webscraper.io/"]
     
     ws = Crawler(sites, allowed_urls=allowed)
+    
     print(ws)
     xs = ws.crawl()
     
