@@ -1,3 +1,4 @@
+from asyncio import as_completed
 import uuid
 import queue
 
@@ -60,7 +61,6 @@ class Crawler:
         else: self.allowed_urls = None
         
         self.crawling = False
-        self.pool = ThreadPoolExecutor()
         
         self.queue = queue.Queue()
         self.responses = {}
@@ -122,10 +122,11 @@ class Crawler:
                         in self.allowed_urls):
                     return request
         
-        #Add requests to ThreadPool    
-        requests = self.pool.map(lambda url : _request(url), urls)
-        
-        self.pool.map(self.queue.put, requests)
+        with ThreadPoolExecutor(len(urls)) as executor:
+            #Add requests to ThreadPool    
+            request_futures = executor.map(lambda url : _request(url), urls)
+            #Add Crawler.Requests to queue
+            _ = executor.map(self.queue.put, request_futures)
     
     
     
