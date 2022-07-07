@@ -153,6 +153,7 @@ class Crawler:
             #Skip invalid requests where Webster.Request.body is None
             #and thus cannot be parsed.
             #Webster.Parser module raises TypeError if body is None.
+            print(f"{self} Skipped {rqs}")
             pass
                               
     
