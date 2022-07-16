@@ -1,4 +1,3 @@
-from asyncio import as_completed
 import uuid
 import queue
 
@@ -154,7 +153,6 @@ class Crawler:
             #and thus cannot be parsed.
             #Webster.Parser module raises TypeError if body is None.
             print(f"{self} Skipped {rqs}")
-            pass
                               
     
     
@@ -164,16 +162,13 @@ class Crawler:
     
     
 if __name__ == "__main__":
-
-    #ws = Crawler(["https://google.com/"])
+    url = "https://github.com/HRemonen/Webster"
     sites = [ 
-            "https://webscraper.io/test-sites",
-            "https://webscraper.io/test-sites", 
-            "https://webscraper.io/test-sites", 
+            url, 
             ]
     empty = []
     
-    allowed = ["https://webscraper.io/"]
+    allowed = ["https://github.com/"]
     
     ws = Crawler(sites, allowed_urls=allowed)
     

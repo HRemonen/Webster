@@ -151,13 +151,7 @@ class Request(object):
 
 
 if __name__ == "__main__":
-    url = "https://webscraper.io/test-sites"
-    request = Request(url)
-    print(request)
-    
-    
-    
-    test = "https://webscraper.io/documentation"
+    test = "https://github.com/HRemonen/Webster"
     test_req = Request(test)
     print(test_req)
 

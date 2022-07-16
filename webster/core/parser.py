@@ -87,7 +87,7 @@ class Parser:
 
 
 if __name__ == "__main__":
-    url = "https://webscraper.io/test-sites"
+    url = "https://github.com/HRemonen/Webster"
     request = Request(url)
     
     p = Parser(request)
