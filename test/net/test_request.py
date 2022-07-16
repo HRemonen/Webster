@@ -1,8 +1,6 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from matplotlib.pyplot import isinteractive
-
 from webster.net.request import Request
 
 class TestRequest(unittest.TestCase):
@@ -56,13 +54,16 @@ class TestRequest(unittest.TestCase):
         
         assert isinstance(request.body, bytes)
         
-        r3 = self.request_class(url="http://www.example.com/", body=b"Foo: \c4", encoding='utf-8')
-        assert isinstance(r3.body, bytes)
-        self.assertEqual(r3.body, b"Foo: \c4")
+        request = self.request_class(url="http://www.example.com/", body=b"Foo: \c4", encoding='utf-8')
+        assert isinstance(request.body, bytes)
+        self.assertEqual(request.body, b"Foo: \c4")
 
-        r4 = self.request_class(url="http://www.example.com/", body=b"\xa31", encoding='latin1')
-        assert isinstance(r4.body, bytes)
-        self.assertEqual(r4.body, b"\xa31")
+        request = self.request_class(url="http://www.example.com/", body=b"\xa31", encoding='latin1')
+        assert isinstance(request.body, bytes)
+        self.assertEqual(request.body, b"\xa31")
+        
+    def testRequestStatusCode(self):
+        raise NotImplementedError
 
 if __name__ == "__main__":
     unittest.main()

@@ -150,12 +150,6 @@ class Request(object):
 
 
 
-if __name__ == "__main__":
-    test = "https://github.com/HRemonen/Webster"
-    test_req = Request(test)
-    print(test_req)
-
-
     
     
     
