@@ -1,4 +1,5 @@
 import re
+from typing import Type
 
 def ModeValidator(mode: str) -> bool:
     """
@@ -29,6 +30,8 @@ def ModeValidator(mode: str) -> bool:
                     "Expected Mode type of string, instead got: "
                     , type(mode))
 
+
+
 def URLValidator(url: list) -> bool:
     """
     Validates the URL or list of URLs
@@ -49,7 +52,11 @@ def URLValidator(url: list) -> bool:
         True if URL of accepted form.
     """
     def _validate(input: str) -> bool:
-
+        if not isinstance(input, str):
+            raise TypeError(
+                "Check input list content! Expected URL type of string, instead got: "
+                , type(input))
+            
         return bool(re.match(
             r"(https?|ftp)://"          # protocol
             r"(\w+(\-\w+)*\.)?"         # host (optional)
@@ -64,11 +71,7 @@ def URLValidator(url: list) -> bool:
             raise TypeError(
                     "Expected URL type of list or string, instead got: "
                     , type(url))
-        else: 
+        else:
+            
             return all([_validate(x) for x in url])           
     else: return _validate(url)           
-    
-    
-    
-if __name__ == "__main__":
-    print(URLValidator("mailto:info@webscraper.io"))

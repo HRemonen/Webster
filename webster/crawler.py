@@ -10,6 +10,7 @@ from utils import url_tools
 from net.request import Request
 from core.parser import Parser
 
+
 class Crawler:
     """
     A class that represents crawler object used to crawl websites.
@@ -35,9 +36,6 @@ class Crawler:
         Starts crawler with given starting points.
     
     """
-    
-    
-    
     def __init__(self, 
                 start_urls: list,
                 allowed_urls: Optional[list] = None,
@@ -60,11 +58,10 @@ class Crawler:
         else: self.allowed_urls = None
         
         self.crawling = False
-        self.pool = ThreadPoolExecutor()
         
         self.queue = queue.Queue()
         self.responses = {}
-    
+
     
     
     def crawl(self) -> None:
@@ -122,10 +119,11 @@ class Crawler:
                         in self.allowed_urls):
                     return request
         
-        #Add requests to ThreadPool    
-        requests = self.pool.map(lambda url : _request(url), urls)
-        
-        self.pool.map(self.queue.put, requests)
+        with ThreadPoolExecutor(len(urls)) as executor:
+            #Add requests to ThreadPool    
+            request_futures = executor.map(lambda url : _request(url), urls)
+            #Add Crawler.Requests to queue
+            _ = executor.map(self.queue.put, request_futures)
     
     
     
@@ -154,8 +152,9 @@ class Crawler:
             #Skip invalid requests where Webster.Request.body is None
             #and thus cannot be parsed.
             #Webster.Parser module raises TypeError if body is None.
-            pass
+            print(f"{self} Skipped {rqs}")
                               
+    
     
     def __str__(self):
         return f"Crawler: " + str(self._ID)
@@ -163,16 +162,13 @@ class Crawler:
     
     
 if __name__ == "__main__":
-
-    #ws = Crawler(["https://google.com/"])
+    url = "https://github.com/HRemonen/Webster"
     sites = [ 
-            "https://webscraper.io/test-sites",
-            "https://webscraper.io/test-sites", 
-            "https://webscraper.io/test-sites", 
+            url, 
             ]
     empty = []
     
-    allowed = ["https://webscraper.io/"]
+    allowed = ["https://github.com/"]
     
     ws = Crawler(sites, allowed_urls=allowed)
     

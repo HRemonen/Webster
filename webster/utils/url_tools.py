@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 def URLnetloc(url: str) -> str:
     """
-    Get websites URL netloc from the response object
+    Get websites URL netloc from the URL string.
 
     Returns
     -------
@@ -20,7 +20,3 @@ def URLnetloc(url: str) -> str:
     netloc = '{uri.netloc}'.format(uri=url)
         
     return netloc
-
-
-    
-          

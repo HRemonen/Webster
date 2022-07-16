@@ -42,6 +42,7 @@ class Parser:
             if self.response is not None:
                 self.extractor = lxml.html.fromstring(self.response)
             
+            
         
     def parse_anchors(self) -> list:
         """
@@ -78,11 +79,15 @@ class Parser:
                     
         return urls
     
+    
+    
     def parse_elements(self, elements: list):
         raise NotImplementedError
 
+
+
 if __name__ == "__main__":
-    url = "https://webscraper.io/test-sites"
+    url = "https://github.com/HRemonen/Webster"
     request = Request(url)
     
     p = Parser(request)
