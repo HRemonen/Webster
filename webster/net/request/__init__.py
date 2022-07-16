@@ -4,7 +4,7 @@ from io import BytesIO
 from typing import Optional
 from urllib.parse import urlparse
 
-from utils import validators
+from webster.utils import validators
 
 
 class Request(object):

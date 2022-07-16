@@ -43,6 +43,11 @@ class TestURLValidator(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             validators.URLValidator(url)
+            
+        url = b""
+        
+        with self.assertRaises(TypeError):
+            validators.URLValidator(url)
     
     def testURLValidatorBADListInput(self):
         url = [1, 2, 3]
@@ -50,19 +55,29 @@ class TestURLValidator(unittest.TestCase):
         with self.assertRaises(TypeError):
             validators.URLValidator(url)
             
-    def testURLValidatorMAIL(self):
-        url = "mailto:info@remonen.fi"
+        urls = [1, 
+                "https://example.org",
+                ]
         
-        validate = validators.URLValidator(url)
-        
-        self.assertFalse(validate)
+        with self.assertRaises(TypeError):
+            validators.URLValidator(urls)
     
-    def testURLValidatorNoScheme(self):
-        url = "github.com/"
-        
-        validate = validators.URLValidator(url)
-        
-        self.assertFalse(validate)
+    def testURLValidatorScheme(self):
+        self.assertTrue(validators.URLValidator("https://example.org"))
+        self.assertTrue(validators.URLValidator("http://example.org"))
+        self.assertTrue(validators.URLValidator("ftp://example.org"))
+     
+    def testURLValidatorNotSupportedScheme(self):
+        self.assertFalse(validators.URLValidator("mailto:info@remonen.fi"))
+        self.assertFalse(validators.URLValidator("data:remonen"))
+        self.assertFalse(validators.URLValidator("about:remonen"))
     
+    
+    def testURLValidatorNoScheme(self): 
+        self.assertRaises(TypeError, validators.URLValidator("asd"))
+        self.assertRaises(TypeError, validators.URLValidator("/asd"))
+        self.assertRaises(TypeError, validators.URLValidator("/asd/"))
+        self.assertRaises(TypeError, validators.URLValidator("/asd:foo"))
+
 if __name__ == "__main__":
     unittest.main()
