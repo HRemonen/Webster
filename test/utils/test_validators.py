@@ -25,14 +25,14 @@ class TestModeValidator(unittest.TestCase):
             
 class TestURLValidator(unittest.TestCase):
     def testURLValidatorSingleURLOK(self):
-        url = "https://github.com/HRemonen/Webster/"
+        url = "https://www.example.com/"
         
         validate = validators.URLValidator(url)
         
         self.assertTrue(validate)
         
     def testURLValidatorListOK(self):
-        url = ["https://github.com/HRemonen/Webster/"]
+        url = ["https://www.example.com/"]
         
         validate = validators.URLValidator(url)
         
@@ -56,16 +56,17 @@ class TestURLValidator(unittest.TestCase):
             validators.URLValidator(url)
             
         urls = [1, 
-                "https://example.org",
+                "https://example.com",
+                "https://www.example.com/"
                 ]
         
         with self.assertRaises(TypeError):
             validators.URLValidator(urls)
     
     def testURLValidatorScheme(self):
-        self.assertTrue(validators.URLValidator("https://example.org"))
-        self.assertTrue(validators.URLValidator("http://example.org"))
-        self.assertTrue(validators.URLValidator("ftp://example.org"))
+        self.assertTrue(validators.URLValidator("https://example.com"))
+        self.assertTrue(validators.URLValidator("http://example.com"))
+        self.assertTrue(validators.URLValidator("ftp://example.com"))
      
     def testURLValidatorNotSupportedScheme(self):
         self.assertFalse(validators.URLValidator("mailto:info@remonen.fi"))
