@@ -4,6 +4,7 @@ from webster.net.request import Request
 from webster.core.parser import Parser
 
 class TestParser(unittest.TestCase):
+    
     #Aliases
     request_class = Request
     parser_class = Parser
@@ -34,13 +35,11 @@ class TestParser(unittest.TestCase):
         
         r = self.request_class(url="https://www")
         parser = self.parser_class(request=r)
-        
         self.assertRaises(Exception, parser.parse_anchors)
         
         #Test succesful parsing returning list of elements.
         r = self.request_class(url="https://www.example.com")
         return_anchors = self.parser_class(request=r).parse_anchors()
-        
         assert isinstance(return_anchors, list)
         self.assertEqual(return_anchors, [])
         

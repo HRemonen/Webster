@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 from webster.net.request import Request
 
 class TestRequest(unittest.TestCase):
+    
     #Alias for Request class
     request_class = Request
     
@@ -35,13 +36,11 @@ class TestRequest(unittest.TestCase):
     def testRequestURL(self):
         test_url = "https://www.example.com"
         request = self.request_class(test_url)
-        
         self.assertEqual(request.url, test_url)
     
     def testRequestEncoding(self):
         test_url = "https://www.example.com"
         request = self.request_class(test_url)
-        
         self.assertEqual(request._encoding, "utf-8")
     
     def testRequestBody(self):
@@ -74,7 +73,6 @@ class TestRequest(unittest.TestCase):
         #Test Requests are not equal despite same url.
         r1 = self.request_class(url="https://www.example.com")
         r2 = self.request_class(url="https://www.example.com")
-        
         self.assertNotEqual(r1, r2)
         
         #Test Requests are not equal and can be part of set
@@ -82,7 +80,6 @@ class TestRequest(unittest.TestCase):
         test_set = set()
         test_set.add(r1)
         test_set.add(r2)
-        
         self.assertEqual(len(test_set), 2)
         
 if __name__ == "__main__":

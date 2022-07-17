@@ -8,6 +8,7 @@ from webster.net.request import Request
 
 
 class Parser:
+    
     """
     A class that represents Parser module 
     used to parse request objects. 
@@ -23,6 +24,7 @@ class Parser:
         Parses the downloaded html file for anchors. 
     
     """
+    
     def __init__(self, request: object) -> None:
         """
         Parameters
@@ -40,9 +42,7 @@ class Parser:
             self.request = request
             self.response = self.request.get()
             if self.response is not None:
-                self.extractor = lxml.html.fromstring(self.response)
-            
-            
+                self.extractor = lxml.html.fromstring(self.response) 
         
     def parse_anchors(self) -> list:
         """
@@ -79,8 +79,5 @@ class Parser:
                     
         return urls
     
-    
-    
     def parse_elements(self, elements: list):
         raise NotImplementedError
-

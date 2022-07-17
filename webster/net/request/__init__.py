@@ -8,6 +8,7 @@ from webster.utils import validators
 
 
 class Request(object):
+    
     """
     A class that represents a HTTP request object.
     
@@ -36,6 +37,7 @@ class Request(object):
         Returns bytes object of HTTP request.
     
     """
+    
     def __init__(
         self,
         url: str,
@@ -57,20 +59,14 @@ class Request(object):
                     "Expected body type of bytes, instead got: "
                     , type(body))
         else: self.body = self.__get()
-       
-       
         
     def _get_url(self) -> str:
         return self.url
 
-
-
     def _set_url(self, url: str) -> str:
         if validators.URLValidator(url):
             return url
-
-
-
+        
     def get(self) -> bytes:
         """
         Send GET request to server of the request class object.
@@ -81,14 +77,10 @@ class Request(object):
             Website content.
         """
         return self.body
-    
-    
-    
+
     def text(self) -> str:
         return self.body.decode(self._encoding)
     
-    
-
     def base_url(self) -> str:
         """
         Get websites base URL (URL netloc) from the response object
@@ -106,8 +98,6 @@ class Request(object):
         base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=request_url)
             
         return base_url
-    
-    
     
     def __get(self):
         """
@@ -143,15 +133,7 @@ class Request(object):
         
         return data 
 
-
-
     def __str__(self):
         return f"({self.status_code}) <{self.method} : {self.url}>"
 
     __repr__ = __str__
-
-
-
-    
-    
-    

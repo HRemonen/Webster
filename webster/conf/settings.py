@@ -15,5 +15,4 @@ PATH = os.path
 #Path to downloads folder
 DL_DIR = "downloads/html/"
 PARSE_DIR = "downloads/json/"
-
 ###########################-/SETTINGS/-###########################
