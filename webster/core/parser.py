@@ -38,7 +38,6 @@ class Parser:
                 "Expected response type of Request, instead got: "
                 , type(request))
         else: 
-            
             self.request = request
             self.response = self.request.get()
             if self.response is not None:

@@ -5,10 +5,10 @@ from concurrent.futures import ThreadPoolExecutor
 
 from typing import Optional
 
-from utils import validators
-from utils import url_tools
-from net.request import Request
-from core.parser import Parser
+from webster.utils import validators
+from webster.utils import url_tools
+from webster.net.request import Request
+from webster.core.parser import Parser
 
 
 class Crawler:
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     
     allowed = ["https://github.com/"]
     
-    ws = Crawler(sites, allowed_urls=allowed)
+    ws = Crawler(sites)
     
     print(ws)
     xs = ws.crawl()
