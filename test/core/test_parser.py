@@ -1,7 +1,5 @@
 import unittest
 
-from requests import request
-
 from webster.net.request import Request
 from webster.core.parser import Parser
 
