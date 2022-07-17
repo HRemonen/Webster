@@ -3,8 +3,8 @@ import lxml.etree
 
 from urllib.parse import urljoin
 
-from utils import validators
-from net.request import Request
+from webster.utils import validators
+from webster.net.request import Request
 
 
 class Parser:
@@ -84,12 +84,3 @@ class Parser:
     def parse_elements(self, elements: list):
         raise NotImplementedError
 
-
-
-if __name__ == "__main__":
-    url = "https://github.com/HRemonen/Webster"
-    request = Request(url)
-    
-    p = Parser(request)
-
-    print(p.parse_anchors())

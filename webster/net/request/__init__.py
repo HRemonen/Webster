@@ -119,19 +119,21 @@ class Request(object):
         data = None
         b = BytesIO()
 
-        crl = pycurl.Curl()
-        crl.setopt(pycurl.URL, self.url)
-        crl.setopt(pycurl.FOLLOWLOCATION, 1)
-        crl.setopt(pycurl.CONNECTTIMEOUT, 5)
-        crl.setopt(pycurl.TIMEOUT, 8)
-        crl.setopt(pycurl.WRITEDATA, b)
-
         try:
+            crl = pycurl.Curl()
+            crl.setopt(pycurl.URL, self.url)
+            crl.setopt(pycurl.FOLLOWLOCATION, 1)
+            crl.setopt(pycurl.CONNECTTIMEOUT, 5)
+            crl.setopt(pycurl.TIMEOUT, 8)
+            crl.setopt(pycurl.WRITEDATA, b)
             crl.perform()
-        except pycurl.error:
+            
+        except (pycurl.error, TypeError):
             #Something went wrong requesting.
-            #Could be connectiontimeout or other stuff
-            #Return None
+            #Could be connection timeout, bad url, no network
+            #connection or other stuff
+            
+            #Return none data. 
             return data
         
         data = b.getvalue()
