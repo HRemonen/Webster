@@ -103,10 +103,9 @@ class Crawler:
             
             Checks if request is already made to this URL.
             """
-            
-            request = Request(url)
-            
-            if request.url not in self.responses:
+            if url not in self.responses:
+                request = Request(url)
+                print(f"{self} Requesting {request}")
                 self.responses[request.url] = request
                 
                 #Check if allowed url
@@ -132,7 +131,7 @@ class Crawler:
         Start requesting new URLs.
         """
     
-        print(f"{self} Crawled {rqs}")
+        print(f"{self} Parsing {rqs}")
         
         try:
             response_anchors = Parser(rqs).parse_anchors()
@@ -150,7 +149,7 @@ class Crawler:
             #Skip invalid requests where Webster.Request.body is None
             #and thus cannot be parsed.
             #Webster.Parser module raises TypeError if body is None.
-            print(f"{self} Skipped {rqs}")
+            print(f"{self} Skipping {rqs}")
                               
     def __str__(self):
         return f"Crawler: " + str(self._ID)

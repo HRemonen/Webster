@@ -3,6 +3,8 @@ import lxml.etree
 
 from urllib.parse import urljoin
 
+from w3lib.html import safe_url_string
+
 from webster.utils import validators
 from webster.net.request import Request
 
@@ -74,6 +76,8 @@ class Parser:
                 url = urljoin(base_url, anchor)
             
             if url is not None and url not in urls:
+                #Escape unsafe characters in the URL according to RFC-3986
+                url = safe_url_string(url)
                 urls.append(url)   
                     
         return urls
