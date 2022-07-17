@@ -71,7 +71,7 @@ class Parser:
             if validators.URLValidator(anchor):
                 url = anchor
                 
-            elif anchor.startswith("/"):
+            else:
                 url = urljoin(base_url, anchor)
             
             if url is not None and url not in urls:

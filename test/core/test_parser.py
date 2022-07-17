@@ -1,13 +1,20 @@
 import unittest
 
+import requests
+
 from webster.net.request import Request
 from webster.core.parser import Parser
+from test.test_data import get_testdata
 
 class TestParser(unittest.TestCase):
     
     #Aliases
     request_class = Request
     parser_class = Parser
+    
+    #Create mock "response" object from local html files to test parsing
+    mock_body = get_testdata("test_site", "index.html")
+    mock_request = Request(url="https://www.example.com/index", body=mock_body)
     
     def testParserBADInit(self):
         #Parser must have a Request object as parameter.
@@ -38,10 +45,17 @@ class TestParser(unittest.TestCase):
         self.assertRaises(Exception, parser.parse_anchors)
         
         #Test succesful parsing returning list of elements.
-        r = self.request_class(url="https://www.example.com")
-        return_anchors = self.parser_class(request=r).parse_anchors()
-        assert isinstance(return_anchors, list)
-        self.assertEqual(return_anchors, [])
+        r = self.mock_request
+        anchors = self.parser_class(request=r).parse_anchors()
+        assert isinstance(anchors, list)
+        self.assertEqual(anchors, [])
+    
+    def testParseAnchorsWithLinks(self):
+        body = get_testdata("test_parse", "linkparse.html")
+        request = Request(url="https://www.example.com/linkparse", body=body)
+        anchors = self.parser_class(request=request).parse_anchors()
+        
+        print(anchors)
         
 if __name__ == "__main__":
     unittest.main()   

@@ -156,7 +156,7 @@ class Crawler:
         return f"Crawler: " + str(self._ID)
         
 if __name__ == "__main__":
-    url = "https://github.com/HRemonen/Webster"
+    url = "https://github.com/"
     sites = [ 
             url, 
             ]
