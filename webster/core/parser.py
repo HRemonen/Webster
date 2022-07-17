@@ -3,11 +3,14 @@ import lxml.etree
 
 from urllib.parse import urljoin
 
-from utils import validators
-from net.request import Request
+from w3lib.html import safe_url_string
+
+from webster.utils import validators
+from webster.net.request import Request
 
 
 class Parser:
+    
     """
     A class that represents Parser module 
     used to parse request objects. 
@@ -23,6 +26,7 @@ class Parser:
         Parses the downloaded html file for anchors. 
     
     """
+    
     def __init__(self, request: object) -> None:
         """
         Parameters
@@ -36,13 +40,10 @@ class Parser:
                 "Expected response type of Request, instead got: "
                 , type(request))
         else: 
-            
             self.request = request
             self.response = self.request.get()
             if self.response is not None:
-                self.extractor = lxml.html.fromstring(self.response)
-            
-            
+                self.extractor = lxml.html.fromstring(self.response) 
         
     def parse_anchors(self) -> list:
         """
@@ -71,25 +72,15 @@ class Parser:
             if validators.URLValidator(anchor):
                 url = anchor
                 
-            elif anchor.startswith("/"):
+            else:
                 url = urljoin(base_url, anchor)
             
             if url is not None and url not in urls:
+                #Escape unsafe characters in the URL according to RFC-3986
+                url = safe_url_string(url)
                 urls.append(url)   
                     
         return urls
     
-    
-    
     def parse_elements(self, elements: list):
         raise NotImplementedError
-
-
-
-if __name__ == "__main__":
-    url = "https://github.com/HRemonen/Webster"
-    request = Request(url)
-    
-    p = Parser(request)
-
-    print(p.parse_anchors())

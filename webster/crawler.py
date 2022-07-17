@@ -5,13 +5,14 @@ from concurrent.futures import ThreadPoolExecutor
 
 from typing import Optional
 
-from utils import validators
-from utils import url_tools
-from net.request import Request
-from core.parser import Parser
+from webster.utils import validators
+from webster.utils import url_tools
+from webster.net.request import Request
+from webster.core.parser import Parser
 
 
 class Crawler:
+    
     """
     A class that represents crawler object used to crawl websites.
     
@@ -36,6 +37,7 @@ class Crawler:
         Starts crawler with given starting points.
     
     """
+    
     def __init__(self, 
                 start_urls: list,
                 allowed_urls: Optional[list] = None,
@@ -61,8 +63,6 @@ class Crawler:
         
         self.queue = queue.Queue()
         self.responses = {}
-
-    
     
     def crawl(self) -> None:
         """
@@ -89,8 +89,6 @@ class Crawler:
             
         return self.responses
     
-    
-    
     def _start_requests(self, urls: list) -> None:
         """
         Start requesting from the given URLs.
@@ -98,16 +96,16 @@ class Crawler:
         
         Put Webster.Request objects to queue.
         """
+        
         def _request(url: str) -> Request:
             """
             Helper function for making get requests.
             
             Checks if request is already made to this URL.
             """
-            
-            request = Request(url)
-            
-            if request.url not in self.responses:
+            if url not in self.responses:
+                request = Request(url)
+                print(f"{self} Requesting {request}")
                 self.responses[request.url] = request
                 
                 #Check if allowed url
@@ -125,8 +123,6 @@ class Crawler:
             #Add Crawler.Requests to queue
             _ = executor.map(self.queue.put, request_futures)
     
-    
-    
     def _crawl(self, rqs: Request):
         """
         Helper function for crawling.
@@ -135,7 +131,7 @@ class Crawler:
         Start requesting new URLs.
         """
     
-        print(f"{self} Crawled {rqs}")
+        print(f"{self} Parsing {rqs}")
         
         try:
             response_anchors = Parser(rqs).parse_anchors()
@@ -148,21 +144,18 @@ class Crawler:
             
             if new_URLs:
                 self._start_requests(new_URLs) 
+                
         except TypeError:
             #Skip invalid requests where Webster.Request.body is None
             #and thus cannot be parsed.
             #Webster.Parser module raises TypeError if body is None.
-            print(f"{self} Skipped {rqs}")
+            print(f"{self} Skipping {rqs}")
                               
-    
-    
     def __str__(self):
         return f"Crawler: " + str(self._ID)
         
-    
-    
 if __name__ == "__main__":
-    url = "https://github.com/HRemonen/Webster"
+    url = "https://github.com/"
     sites = [ 
             url, 
             ]
@@ -170,7 +163,7 @@ if __name__ == "__main__":
     
     allowed = ["https://github.com/"]
     
-    ws = Crawler(sites, allowed_urls=allowed)
+    ws = Crawler(sites)
     
     print(ws)
     xs = ws.crawl()

@@ -8,6 +8,7 @@ from webster.utils import validators
 
 
 class Request(object):
+    
     """
     A class that represents a HTTP request object.
     
@@ -36,6 +37,7 @@ class Request(object):
         Returns bytes object of HTTP request.
     
     """
+    
     def __init__(
         self,
         url: str,
@@ -57,20 +59,14 @@ class Request(object):
                     "Expected body type of bytes, instead got: "
                     , type(body))
         else: self.body = self.__get()
-       
-       
         
     def _get_url(self) -> str:
         return self.url
 
-
-
     def _set_url(self, url: str) -> str:
         if validators.URLValidator(url):
             return url
-
-
-
+        
     def get(self) -> bytes:
         """
         Send GET request to server of the request class object.
@@ -81,14 +77,10 @@ class Request(object):
             Website content.
         """
         return self.body
-    
-    
-    
+
     def text(self) -> str:
         return self.body.decode(self._encoding)
     
-    
-
     def base_url(self) -> str:
         """
         Get websites base URL (URL netloc) from the response object
@@ -107,8 +99,6 @@ class Request(object):
             
         return base_url
     
-    
-    
     def __get(self):
         """
         Helper function for request.get()
@@ -119,19 +109,21 @@ class Request(object):
         data = None
         b = BytesIO()
 
-        crl = pycurl.Curl()
-        crl.setopt(pycurl.URL, self.url)
-        crl.setopt(pycurl.FOLLOWLOCATION, 1)
-        crl.setopt(pycurl.CONNECTTIMEOUT, 5)
-        crl.setopt(pycurl.TIMEOUT, 8)
-        crl.setopt(pycurl.WRITEDATA, b)
-
         try:
+            crl = pycurl.Curl()
+            crl.setopt(pycurl.URL, self.url)
+            crl.setopt(pycurl.FOLLOWLOCATION, 1)
+            crl.setopt(pycurl.CONNECTTIMEOUT, 5)
+            crl.setopt(pycurl.TIMEOUT, 8)
+            crl.setopt(pycurl.WRITEDATA, b)
             crl.perform()
-        except pycurl.error:
+            
+        except (pycurl.error, TypeError):
             #Something went wrong requesting.
-            #Could be connectiontimeout or other stuff
-            #Return None
+            #Could be connection timeout, bad url, no network
+            #connection or other stuff
+            
+            #Return none data. 
             return data
         
         data = b.getvalue()
@@ -141,15 +133,7 @@ class Request(object):
         
         return data 
 
-
-
     def __str__(self):
         return f"({self.status_code}) <{self.method} : {self.url}>"
 
     __repr__ = __str__
-
-
-
-    
-    
-    

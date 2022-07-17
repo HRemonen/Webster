@@ -5,6 +5,7 @@ from net.request import Request
 
 
 class Downloader:
+    
     """
     A class that represents Downloader module 
     used to download webpages and saving 
@@ -20,6 +21,7 @@ class Downloader:
     download()
         Downloads site content and saves the content as html file.  
     """
+    
     def __init__(self, request: Request) -> None:
         """
         Parameters
@@ -45,31 +47,21 @@ class Downloader:
                 os.makedirs(settings.DL_DIR)
             except FileExistsError:
                 pass #Folder already exists not a big deal
-          
-          
               
     def get_request(self):
         return self.request
     
-    
-    
     def get_filename(self):
         return self.filename
     
-    
-    
     def get_filepath(self):
         return self.filepath
-    
-    
     
     def __str__(self):
         return self.filename
           
     __repr__= __str__
        
-       
-        
     def download(self) -> None:
         """
         Downloads site content and saves the content as html file.
@@ -88,9 +80,7 @@ class Downloader:
             else: raise FileExistsError
         except FileExistsError:
             print("File exists already...")
-        
-        
-        
+         
 if __name__ == "__main__":
     url = "https://github.com/HRemonen/Webster"
     request = Request(url)
