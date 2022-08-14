@@ -62,6 +62,7 @@ class Crawler:
         self.crawling = False
         
         self.queue = queue.Queue()
+        #Store response objects in a hashmap for easy access.
         self.responses = {}
     
     def crawl(self) -> None:
@@ -103,27 +104,35 @@ class Crawler:
             
             Checks if request is already made to this URL.
             """
+            
+            #If this URL is already requested, it is stored in 
+            #responses hashmap. Check this before anything.
             if url not in self.responses:
                 request = Request(url)
                 print(f"{self} Requesting {request}")
                 self.responses[request.url] = request
                 
-                #Check if allowed url
+                #Check if allowed urls exists.
                 if self.allowed_urls is None:
                     return request
+                
+                #IF allowed urls are given, check if request is 
+                #in the allowed ulrs. 
                 elif any(url_tools.URLnetloc(request.url)
                         in url_tools.URLnetloc(s) 
                         for s 
                         in self.allowed_urls):
                     return request
         
+        #Create thread pool executor. Worker count matches our 
+        #count of awaiting urls.
         with ThreadPoolExecutor(len(urls)) as executor:
             #Add requests to ThreadPool    
             request_futures = executor.map(lambda url : _request(url), urls)
             #Add Crawler.Requests to queue
             _ = executor.map(self.queue.put, request_futures)
     
-    def _crawl(self, rqs: Request):
+    def _crawl(self, rqs: Request) -> None:
         """
         Helper function for crawling.
         
@@ -134,21 +143,26 @@ class Crawler:
         print(f"{self} Parsing {rqs}")
         
         try:
+            #Parse response anchors with Parser module.
             response_anchors = Parser(rqs).parse_anchors()
+            #Store new URLs to this list later on.
             new_URLs = []
             
+            #If new anchors were found, add them to the
+            #list if they have not already been requested.
             if response_anchors:
                 for resp in response_anchors:
                     if resp not in self.responses:
                         new_URLs.append(resp)
             
+            #IF new URLs were found, start requesting them.
             if new_URLs:
                 self._start_requests(new_URLs) 
-                
+        
+        #Skip invalid requests where Webster.Request.body is None
+        #and thus cannot be parsed.
+        #Webster.Parser module raises TypeError if body is None.       
         except TypeError:
-            #Skip invalid requests where Webster.Request.body is None
-            #and thus cannot be parsed.
-            #Webster.Parser module raises TypeError if body is None.
             print(f"{self} Skipping {rqs}")
                               
     def __str__(self):
