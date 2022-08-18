@@ -35,11 +35,13 @@ class Parser:
             Response object of the URL to parse data out of.   
         """
         
+        #Check for correct instance
         if not isinstance(request, Request):
             raise TypeError(
                 "Expected response type of Request, instead got: "
                 , type(request))
-        else: 
+        else:
+            #if type was correct, initialize the class.
             self.request = request
             self.response = self.request.get()
             if self.response is not None:
