@@ -34,19 +34,8 @@ class Downloader:
             raise TypeError(
                 "Expected response type of Request, instead got: "
                 , type(request))
-        else:
-            
+        else: 
             self.request = request
-            self.filename = request.url.split(
-                "//")[1].replace(
-                "/", "") + ".html"   
-            self.filepath = settings.PATH.join(
-                settings.DL_DIR, self.filename)
-            
-            try:
-                os.makedirs(settings.DL_DIR)
-            except FileExistsError:
-                pass #Folder already exists not a big deal
               
     def get_request(self):
         return self.request
@@ -66,6 +55,16 @@ class Downloader:
         """
         Downloads site content and saves the content as html file.
         """
+        self.filename = request.url.split(
+                "//")[1].replace(
+                "/", "") + ".html"   
+        self.filepath = settings.PATH.join(
+                settings.DL_DIR, self.filename)
+            
+        try:
+            os.makedirs(settings.DL_DIR)
+        except FileExistsError:
+            pass #Folder already exists not a big deal
 
         #Try to save the file in DL_DIR folder
         try:       
