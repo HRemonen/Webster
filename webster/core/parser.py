@@ -86,3 +86,41 @@ class Parser:
     
     def parse_elements(self, elements: list):
         raise NotImplementedError
+    
+    def parse_index(self) -> dict:
+        """
+        Create indices from the site info gathered using
+        the Request response object.
+    
+        Returns
+        -------
+        <type>
+            dataset of the indices. This dataset is then
+            stored to the database.
+        """
+        
+        root_url = self.request._get_url()
+        adjacent = self.parse_anchors()
+        title = self.extractor.xpath('//head/title') or None
+        description = self.extractor.xpath("//meta[@name='description']/@content") or None
+        kwords = self.extractor.xpath("//meta[@name='keywords']/@content") or None
+        content = lxml.html.tostring(self.extractor, method='text', encoding='unicode')
+        
+        indice = {
+            "url": root_url,
+            "adjacents": adjacent,
+            "title": title,
+            "description": description,
+            "keywords": kwords,
+            "text": content
+        }
+        
+        return indice
+    
+if __name__ == "__main__":
+    url = "https://github.com"
+    request = Request(url)
+    
+    d = Parser(request)
+    print(d.parse_index())
+        
