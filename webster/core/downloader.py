@@ -79,9 +79,11 @@ class Downloader:
             else: raise FileExistsError
         except FileExistsError:
             print("File exists already...")
+        
+        
          
 if __name__ == "__main__":
-    url = "https://github.com/HRemonen/Webster"
+    url = "https://github.com"
     request = Request(url)
     
     d = Downloader(request)
