@@ -2,8 +2,8 @@ import pycurl
 
 from io import BytesIO 
 from typing import Optional
-from urllib.parse import urlparse
 
+from webster.utils import url_tools
 from webster.utils import validators
 
 
@@ -91,13 +91,7 @@ class Request(object):
             Base URL (<scheme>://<netloc>/)
         
         """
-        request_url = urlparse(self.url)
-        
-        #Get the "base URL" for the relative URLs to work correctly
-        #Base URL consist of URL scheme and netloc basically, ignore anything else.
-        base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=request_url)
-            
-        return base_url
+        return url_tools.base_url(self.url)
     
     def __get(self):
         """
