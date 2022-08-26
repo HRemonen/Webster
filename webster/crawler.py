@@ -1,3 +1,4 @@
+import time
 import uuid
 import queue
 
@@ -125,8 +126,19 @@ class Crawler:
                     #Store the RobotParser object to the hashmap for later use cases.
                     self.robots_allowed[base_url] = rp
                 
-                if self.robots_allowed[base_url].allowed(url):
+                rp = self.robots_allowed[base_url]
+                
+                if rp.allowed(url):
+                    #Check robots.txt crawl_delay and act accordingly
+                    #We do not want to overload the host and have our IP banned...
+                    #Set delay to the value in robots.txt or 1 if not given.
+                    delay = 1 if not rp.delay() else rp.delay()
+                    
+                    #Send the request to the server and sleep for the time of
+                    #delay parameter.
                     request = Request(url)
+                    time.sleep(delay)
+                    
                     print(f"{self} Requesting {request}")                   #SWITCH TO LOGGING
                     self.responses[request.url] = request
                     
@@ -194,13 +206,13 @@ class Crawler:
         return f"Crawler: " + str(self._ID)
         
 if __name__ == "__main__":
-    url = "http://www.musi-cal.com/"
+    url = ""
     sites = [ 
             url, 
             ]
     empty = []
     
-    allowed = ["http://www.musi-cal.com/"]
+    allowed = [""]
     
     ws = Crawler(sites)
     
