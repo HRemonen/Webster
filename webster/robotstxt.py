@@ -15,8 +15,3 @@ class RobotParser():
         
         return self.robotparser.can_fetch(user_agent, url)
 
-if __name__ == "__main__":
-    url = "http://www.musi-cal.com/"
-    rp = RobotParser("http://www.musi-cal.com/robots.txt")
-    
-    print(rp.allowed(url))
