@@ -62,8 +62,10 @@ class Crawler:
         self.crawling = False
         
         self.queue = queue.Queue()
+        
         #Store response objects in a hashmap for easy access.
         self.responses = {}
+        self.robotstxt = {}
     
     def crawl(self) -> None:
         """

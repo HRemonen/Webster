@@ -94,8 +94,8 @@ class Parser:
     
         Returns
         -------
-        <type>
-            dataset of the indices. This dataset is then
+        <dict>
+            dataset of the indices. This dataset can be 
             stored to the database.
         """
         
