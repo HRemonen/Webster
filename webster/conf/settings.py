@@ -15,4 +15,8 @@ PATH = os.path
 #Path to downloads folder
 DL_DIR = "downloads/html/"
 PARSE_DIR = "downloads/json/"
+
+#==================---CRAWLER SETTINGS---==================
+OBEY_ROBOTSTXT = True
+
 ###########################-/SETTINGS/-###########################

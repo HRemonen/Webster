@@ -2,7 +2,7 @@
 from urllib import robotparser
 
 
-class RobotParser():
+class RobotParser:
     
     def __init__(self, root_url: str) -> None:
         self.robotparser = robotparser.RobotFileParser()

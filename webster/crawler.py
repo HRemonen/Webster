@@ -11,6 +11,7 @@ from webster.utils import validators
 from webster.utils import url_tools
 from webster.net.request import Request
 from webster.core.parser import Parser
+from webster.conf import settings
 
 
 class Crawler:
@@ -132,11 +133,14 @@ class Crawler:
                     #Check robots.txt crawl_delay and act accordingly
                     #We do not want to overload the host and have our IP banned...
                     #Set delay to the value in robots.txt or 1 if not given.
-                    delay = 1 if not rp.delay() else rp.delay()
+                    if settings.OBEY_ROBOTSTXT:
+                        delay = 1 if not rp.delay() else rp.delay()
+                    else: delay = 0
                     
                     #Send the request to the server and sleep for the time of
                     #delay parameter.
                     request = Request(url)
+                    
                     time.sleep(delay)
                     
                     print(f"{self} Requesting {request}")                   #SWITCH TO LOGGING
@@ -160,14 +164,20 @@ class Crawler:
                     #The content of this hashmap is trivial, so we store 1 as the value.
                     self.robots_excluded[base_url] = 1
                     print(f"{self} Robots.txt not allowing {base_url}")       #SWITCH TO LOGGING
+        
+        if settings.OBEY_ROBOTSTXT:
+            for url in urls:
+                response = _request(url)
+                self.queue.put(response)
             
-        #Create thread pool executor. Worker count matches our 
-        #count of awaiting urls.
-        with ThreadPoolExecutor(len(urls)) as executor:
-            #Add requests to ThreadPool    
-            request_futures = executor.map(lambda url : _request(url), urls)
-            #Add Crawler.Requests to queue
-            _ = executor.map(self.queue.put, request_futures)
+        else:
+            #Create thread pool executor. Worker count matches our 
+            #count of awaiting urls.
+            with ThreadPoolExecutor(len(urls)) as executor:
+                #Add requests to ThreadPool    
+                request_futures = executor.map(lambda url : _request(url), urls)
+                #Add Crawler.Requests to queue
+                _ = executor.map(self.queue.put, request_futures)
     
     def _crawl(self, rqs: Request) -> None:
         """
@@ -206,13 +216,13 @@ class Crawler:
         return f"Crawler: " + str(self._ID)
         
 if __name__ == "__main__":
-    url = ""
+    url = "https://github.com/"
     sites = [ 
             url, 
             ]
     empty = []
     
-    allowed = [""]
+    allowed = ["https://github.com/"]
     
     ws = Crawler(sites)
     
