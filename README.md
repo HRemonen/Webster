@@ -1,47 +1,40 @@
 # Webster
 
-Webster is a python web scraping framework. Simple use, happy days.
+Webster is an experimental python web scraping framework for my own learning.
 
 ## Installation
-Install Webster using one off the following methods\
+Install Webster using one off the following methods
 
-Not Implemented\
-pip installation incoming\
-
-```bash
-pip install webster
-```
-
-From requirements.txt\
+From requirements.txt
 ```bash
 pip install -r requirements.txt
 ```
 
 ## Dependencies
-Use pipreqs to make new requirements.txt\
-if new dependencies are added in PR\
+Use pipreqs to make new requirements.txt
+if new dependencies are added in PR
 
 ```bash
 pipreqs --force
 ```
 
-Update dependencies if necessary\
+Update dependencies if necessary
 
 ```bash
 pip install -U -r requirements.txt
 ```
 
 ## Testing
-Webster uses Unittest for testing.\
+Webster uses Unittest for testing.
 
-To run all the tests use the following command:\
+To run all the tests use the following command:
 
 ```bash
 python -m unittest discover -v
 ```
 
-Example: We want to test Parser module\
-To run single module test use the following command:\
+Example: We want to test Parser module
+To run single module test use the following command:
 
 ```bash
 python -m unittest test.test_parser -v
@@ -49,7 +42,7 @@ python -m unittest test.test_parser -v
 
 
 ### Coverage
-To run test coverage use coverage module\
+To run test coverage use coverage module
 
 ```bash
 python -m coverage run -m unittest
