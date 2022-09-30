@@ -29,6 +29,9 @@ class Downloader:
         response : object
             Response object of the URL to download.   
         """
+
+        self.filename = None
+        self.filepath = None
         
         if not isinstance(request, Request):
             raise TypeError(
@@ -55,7 +58,7 @@ class Downloader:
         """
         Downloads site content and saves the content as html file.
         """
-        self.filename = request.url.split(
+        self.filename = self.request.url.split(
                 "//")[1].replace(
                 "/", "") + ".html"   
         self.filepath = settings.PATH.join(
@@ -78,17 +81,5 @@ class Downloader:
             #If the file already exists, raise error
             else: raise FileExistsError
         except FileExistsError:
-            print("File exists already...")
+            print("File exists already...")                         #SWITCH TO LOGGING
         
-        
-         
-if __name__ == "__main__":
-    url = "https://github.com"
-    request = Request(url)
-    
-    d = Downloader(request)
-    d.download()
-
-
-    
-    
