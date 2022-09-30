@@ -85,7 +85,6 @@ class TestParser(unittest.TestCase):
     def testParserIndexMock(self):  
         #Test succesful parsing returning list of indices or dataset.
         r = self.mock_request
-        mock_url = r._get_url()
         indices = self.parser_class(request=r).parse_index()
         assert isinstance(indices, dict)
         
@@ -104,7 +103,8 @@ class TestParser(unittest.TestCase):
         assert isinstance(indices["adjacents"], list)
         self.assertEqual(indices["adjacents"], mock_adjacent)
         
-        print(indices)
+        #Test text is type of string
+        assert isinstance(indices["text"], str)
         
 if __name__ == "__main__":
     unittest.main()   

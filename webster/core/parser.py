@@ -116,11 +116,4 @@ class Parser:
         }
         
         return indice
-    
-if __name__ == "__main__":
-    url = "www.com"
-    request = Request(url)
-    
-    d = Parser(request)
-    print(d.parse_index())
         
