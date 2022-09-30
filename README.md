@@ -11,6 +11,22 @@ pip installation inc.
 pip install webster
 ```
 
+## Testing
+Webster uses Unittest for testing.
+
+To run all the tests use the following command:
+
+```bash
+python -m unittest discover -v
+```
+
+Example: We want to test Parser module
+To run single module test use the following command:
+
+```bash
+python -m unittest test.test_parser -v
+```
+
 ## Creating new Crawler instance
 
 ```python
