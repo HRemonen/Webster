@@ -5,17 +5,18 @@ from webster import robotstxt
 from test.test_data import get_testdata, get_testrobots
 
 class TestRobotsTxt(unittest.TestCase):
+    #CONSTANTS
     MOCK_PAGES = ["https://www.example.com/", 
                   "https://www.example.com/index", 
                   "https://www.example.com/page1",
                   "https://www.example.com/page2"]
-    #Aliases
+    
+    #ALIASES
     request_class = Request
     
-    #Create mock objects for testing
+    #MOCKS
     mock_robots = get_testrobots("test_site", "robots.txt")
     mock_body = get_testdata("test_site", "index.html")
-
     mock_root = "https://www.example.com"
     mock_parser = robotstxt.RobotParser(mock_root)
     
@@ -37,6 +38,7 @@ class TestRobotsTxt(unittest.TestCase):
     #Anyhow RobotParser has tests of its own, so we could trust
     #that this is fine.
     #Same goes for delay testing I am afraid.
+    
     """
     def testAllowedAllUseragents(self):
         mock_root = "https://www.example.com"

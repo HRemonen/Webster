@@ -23,11 +23,11 @@ class TestParser(unittest.TestCase):
         '/page 4.html'
     ]
     
-    #Aliases
+    #ALIASES
     request_class = Request
     parser_class = Parser
     
-    #Create mock "response" object from the test html files to test parsing
+    #MOCKS
     mock_body = get_testdata("test_site", "index.html")
     mock_request = Request(url="https://www.example.com/index", body=mock_body)
     
