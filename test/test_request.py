@@ -65,7 +65,8 @@ class TestRequest(unittest.TestCase):
         request = self.request_class(url="http://www.example.com/", body=b"\xa31", encoding='latin1')
         assert isinstance(request.body, bytes)
         self.assertEqual(request.body, b"\xa31")
-        
+    
+    @unittest.skip("not implemented test") 
     def testRequestStatusCode(self):
         raise NotImplementedError
     
