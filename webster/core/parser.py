@@ -118,7 +118,7 @@ class Parser:
         return indice
     
 if __name__ == "__main__":
-    url = "https://github.com"
+    url = "www.com"
     request = Request(url)
     
     d = Parser(request)
