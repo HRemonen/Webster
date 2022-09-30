@@ -11,6 +11,25 @@ pip installation inc.
 pip install webster
 ```
 
+From requirements.txt
+```bash
+pip install -r requirements.txt
+```
+
+## Dependencies
+
+Use pipreqs to make new requirements.txt if new
+dependencies are added in PR
+```bash
+pipreqs --force
+```
+
+Update dependencies if necessary
+
+```bash
+pip install -U -r requirements.txt
+```
+
 ## Testing
 Webster uses Unittest for testing.
 
@@ -25,6 +44,14 @@ To run single module test use the following command:
 
 ```bash
 python -m unittest test.test_parser -v
+```
+
+### Coverage
+
+To run test coverage use coverage module
+
+```bash
+python -m coverage run -m unittest
 ```
 
 ## Creating new Crawler instance
