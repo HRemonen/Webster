@@ -1,14 +1,21 @@
 
 from urllib import robotparser
+from webster.utils import validators
 
 
 class RobotParser:
     
-    def __init__(self, root_url: str) -> None:
+    def __init__(self, url: str) -> None:
         self.robotparser = robotparser.RobotFileParser()
+        self.root_url = ""
+        
+        if validators.URLValidator(url):
+            self.root_url = url
+        else: 
+            raise ValueError ("Given robots.txt url not valid")
         
         #Set the url for robots.txt to the crawler and read it.
-        self.robotparser.set_url(root_url)
+        self.robotparser.set_url(self.root_url)
         self.robotparser.read()
         
     def allowed(self, url: str, user_agent = "*") -> bool:
