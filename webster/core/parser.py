@@ -90,11 +90,11 @@ class Parser:
     def parse_index(self) -> dict:
         """
         Create indices from the site info gathered using
-        the Request response object.
+        the Request object.
     
         Returns
         -------
-        <dict>
+        dict
             dataset of the indices. This dataset can be 
             stored to the database.
         """
