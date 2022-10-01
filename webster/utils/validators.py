@@ -42,12 +42,12 @@ def URLValidator(url: list) -> bool:
     Raises
     ------
     TypeError
-        If URL is not of accepted form, nor not an valid URL.
+        If URL is not of accepted form or not an valid URL.
     
     Returns
     -------
-    object
-        True if URL of accepted form.
+    bool
+        True if URL of accepted form and False if it was not.
     """
     
     def _validate(input: str) -> bool:

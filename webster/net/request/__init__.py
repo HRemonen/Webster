@@ -33,8 +33,8 @@ class Request(object):
     
     Methods
     -------
-    get()
-        Returns bytes object of HTTP request.
+    get
+        Returns Webster.net.Request object of HTTP request.
     
     """
     

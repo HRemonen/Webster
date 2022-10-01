@@ -26,17 +26,15 @@ class Crawler:
         as the starting point and the rest are stored in Queue.
         URLs must be in correct form: ex. https://example.com/ or https://www.example.com/
        
-    allowed_urls : (Optional) list, default = None.
+    allowed_urls : (Optional) list, default = None
         Define allowed URLs to visit.  
          
-    mode : (Optional) str, default = auto.
-        Caution:
-            NotImplemented
-        Default: "auto" -> Supports automation.
+    mode : (Optional) str, default = auto
+        Not Implemented
         
     Methods
     -------
-    crawl()
+    crawl
         Starts crawler with given starting points.
     
     """
@@ -74,7 +72,17 @@ class Crawler:
     
     def crawl(self) -> None:
         """
-        Crawl domains to get Crawler.Request objects.
+        Start Webster.Crawler process from the starting urls given as
+        class attributes. 
+        
+        If settings.OBEY_ROBOTSTXT is True Crawler will obey websites robots.txt 
+        rules. User can disobey these rules by changing this settings value to False.
+        Crawler will continue crawling found urls until there is not any to be found.
+    
+        Returns
+        -------
+        dict
+            Dictionary of crawled websites as Webster.net.Request objects.
         """
         
         if self.crawling:
@@ -102,7 +110,7 @@ class Crawler:
         Start requesting from the given URLs.
         Send Requests to ThreadPool and execute them using threading.
         
-        Put Webster.Request objects to queue.
+        Put Webster.net.Request objects to queue.
         """
         
         def _request(url: str) -> Request:

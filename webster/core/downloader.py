@@ -13,21 +13,21 @@ class Downloader:
     
     Attributes
     ----------
-    request : object
-        Request object.
+    Request : object
+        Webster.net.Request object.
     
     Methods
     -------
-    download()
-        Downloads site content and saves the content as html file.  
+    download
+        Downloads Webster.net.Request content and saves the content as html file.  
     """
     
     def __init__(self, request: Request) -> None:
         """
         Parameters
         ----------
-        request : object
-            Request object of the URL to download.   
+        Request : object
+            Webster.net.Request object of the URL to download.   
         """
 
         self.filename = None
@@ -61,8 +61,8 @@ class Downloader:
     
         Returns
         -------
-        html-file
-            website contents
+        file
+            Webster.net.Request contents saved in html format.
     
         """
         self.filename = self.request.url.split(

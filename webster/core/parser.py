@@ -10,20 +10,19 @@ from webster.net.request import Request
 
 
 class Parser:
-    
     """
     A class that represents Parser module 
-    used to parse request objects. 
+    used to parse Webster.net.Request objects. 
     
     Attributes
     ----------
-    request : object
-        Request object.
+    Request : object
+        Webster.net.Request object.
     
     Methods
     -------
-    parse_anchors()
-        Parses the downloaded html file for anchors. 
+    parse_anchors
+        Parses the Webster.net.Request for new anchors.
     
     """
     
@@ -31,8 +30,8 @@ class Parser:
         """
         Parameters
         ----------
-        response : object
-            Response object of the URL to parse data out of.   
+        Request : object
+            Webster.net.Request object of the URL to parse data out of.  
         """
         
         #Check for correct instance
@@ -49,14 +48,13 @@ class Parser:
         
     def parse_anchors(self) -> list:
         """
-        Parses anchors from the file 
-        / response object and return anchor list.  
+        Parses anchors from the Webster.net.Request object and returns
+        list of adjacent URLs.  
     
         Returns
         -------
         list
-            a list of parsed anchors, 
-            or subURLs found in the website.
+            a list of parsed anchors or subURLs found in the website.
     
         """
         if self.response is None:
@@ -90,7 +88,7 @@ class Parser:
     def parse_index(self) -> dict:
         """
         Create indices from the site info gathered using
-        the Request object.
+        the Webster.net.Request object.
     
         Returns
         -------
