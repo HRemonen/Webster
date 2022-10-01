@@ -26,8 +26,8 @@ class Downloader:
         """
         Parameters
         ----------
-        response : object
-            Response object of the URL to download.   
+        request : object
+            Request object of the URL to download.   
         """
 
         self.filename = None
@@ -56,7 +56,14 @@ class Downloader:
        
     def download(self) -> None:
         """
-        Downloads site content and saves the content as html file.
+        Download page content as html and store it inside the
+        download folder. 
+    
+        Returns
+        -------
+        html-file
+            website contents
+    
         """
         self.filename = self.request.url.split(
                 "//")[1].replace(
