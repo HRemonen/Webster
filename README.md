@@ -51,34 +51,6 @@ To run test coverage use coverage module
 python -m coverage run -m unittest
 ```
 
-## Quickstart
-### Creating new Crawler instance
-```python
-from webster.crawler import Crawler
-
-#Make a list of websites to start crawling from.
-#Atleast provide 1 starting URL.
-sites = [ 
-        "https://site1.io",
-        "https://site2.io", 
-        "https://site3.io", 
-        ]
-
-#Define allowed urls to scrape (Optional):
-#If no allowed urls are provided the crawler 
-#starts wide crawls. Meaning it wont stop 
-#until there is no more sites
-
-allowed = ["https://site.io"]
-    
-# Create new Crawler instance:
-my_crawler = Crawler(
-                sites, 
-                allowed_urls=allowed
-            )
-
-```
-
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
