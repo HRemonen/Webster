@@ -2,6 +2,9 @@
 
 Webster is an experimental python web scraping framework for my own learning.
 
+
+## Documentation
+
 ## Installation
 Install Webster using one off the following methods
 
@@ -10,7 +13,7 @@ From requirements.txt
 pip install -r requirements.txt
 ```
 
-## Dependencies
+### Dependencies
 Use pipreqs to make new requirements.txt
 if new dependencies are added in PR
 
@@ -48,8 +51,8 @@ To run test coverage use coverage module
 python -m coverage run -m unittest
 ```
 
-
-## Creating new Crawler instance
+## Quickstart
+### Creating new Crawler instance
 ```python
 from webster.crawler import Crawler
 
