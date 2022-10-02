@@ -19,4 +19,7 @@ PARSE_DIR = "downloads/json/"
 #==================---CRAWLER SETTINGS---==================
 OBEY_ROBOTSTXT = True
 
+#=================---DATABASE SETTINGS---==================
+
+
 ###########################-/SETTINGS/-###########################
