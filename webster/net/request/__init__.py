@@ -7,7 +7,7 @@ from webster.utils import url_tools
 from webster.utils import validators
 
 
-class Request(object):
+class Request:
     
     """
     A class that represents a HTTP request object.
