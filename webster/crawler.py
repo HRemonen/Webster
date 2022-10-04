@@ -111,8 +111,8 @@ class Crawler:
                     return request
                 
                 #If allowed urls are given, check if request is in the allowed ulrs. 
-                elif any(url_tools.URLnetloc(request.url)
-                        in url_tools.URLnetloc(s) 
+                elif any(url_tools.netloc_url(request.url)
+                        in url_tools.netloc_url(s) 
                         for s 
                         in self.allowed_urls):
                     return request
@@ -220,7 +220,7 @@ if __name__ == "__main__":
     
     allowed = ["https://github.com/"]
     
-    ws = Crawler(sites)
+    ws = Crawler(sites, allowed_urls=["https://hs.fi/"])
     
     xs = ws.crawl()
     
