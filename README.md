@@ -2,8 +2,20 @@
 
 Webster is an experimental python web scraping framework for my own learning.
 
+Webster can be used to scrape or download webpages by giving a list of urls to visit and
+optionally a list of urls to stay within.
+
+Webster could be used as a broad crawler also, but it is not optimized for that as of now.
+
+## Version
+Webster has been tested using Python 3.8+
 
 ## Documentation
+1. [Quick start guide](docs/quickstart.md)
+2. Arkkitehtuurikuvaus
+3. Vaatimusmäärittely [Functional specification]
+4. Testausdokumentti
+5. Changelog ?
 
 ## Installation
 Install Webster using one off the following methods
@@ -14,8 +26,15 @@ pip install -r requirements.txt
 ```
 
 ### Dependencies
-Use pipreqs to make new requirements.txt
-if new dependencies are added in PR
+Webster is using multiple external Python packages some of which are:
++ [lxml](https://lxml.de/index.html) used for processing html documents.
++ [w3lib](https://w3lib.readthedocs.io/en/latest/) used for URL handling and prosessing.
++ [pycURL](http://pycurl.io/) used for networking and making requests to a http server.
++ [pymongo](https://pymongo.readthedocs.io/en/stable/) tools for working with mongoDB using python
+
+Use [pipreqs](https://pypi.org/project/pipreqs/) to make new requirements.txt
+if new dependencies are added in PR force over requirements.txt
+and make sure to include the new one in PR.
 
 ```bash
 pipreqs --force
@@ -28,7 +47,7 @@ pip install -U -r requirements.txt
 ```
 
 ## Testing
-Webster uses Unittest for testing.
+Webster uses [unittest](https://docs.python.org/3/library/unittest.html) for testing.
 
 To run all the tests use the following command:
 
@@ -45,7 +64,7 @@ python -m unittest test.test_parser -v
 
 
 ### Coverage
-To run test coverage use coverage module
+To run test coverage use the [coverage](https://coverage.readthedocs.io/en/6.5.0/) module
 
 ```bash
 python -m coverage run -m unittest
