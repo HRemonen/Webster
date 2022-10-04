@@ -1,6 +1,8 @@
 # Functional specification
 ## Objective
-Objective is to make a lightweight web crawling framework that is simple and easy to use. Webster is aimed to be used as a web scraping framework by independent software developers. Webster is remaining as an open source project and free to use for all within the license.
+Webster is a lightweight web scraping framework for crawling web sites and extracting data which can be used for a range of applications. Some examples could be web archiving, data mining.
+
+Webster is remaining as an open source project and free to use.
 
 ## Users
 In this document independent software developers are referred as the users. Users can use this web scraping framework as part of their own software. Webster does not predefine any strict use cases, it is meant to be a tool.

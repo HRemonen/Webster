@@ -10,12 +10,14 @@ Webster could be used as a broad crawler also, but it is not optimized for that 
 ## Version
 Webster has been tested using Python 3.8+
 
-## Documentation
-1. [Quick start guide](docs/quickstart.md)
-2. Arkkitehtuurikuvaus
-3. Vaatimusmäärittely [Functional specification]
+## Project documentation
+1. [Quick start guide](docs/project_docs/quickstart.md)
+2. [Architectural model](docs/project_docs/architecture.md)
+3. [Functional specification](docs/project_docs/functional_spec.md)
 4. Testausdokumentti
 5. Changelog ?
+
+## Examples 
 
 ## Installation
 Install Webster using one off the following methods
