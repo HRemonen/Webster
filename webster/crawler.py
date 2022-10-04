@@ -223,8 +223,10 @@ if __name__ == "__main__":
     ws = Crawler(sites, allowed_urls=["https://hs.fi/"])
     
     xs = ws.crawl()
+    anchors = list(xs.values())[0][1]
     
     
-    print(xs)
+    
+    print()
 
   
