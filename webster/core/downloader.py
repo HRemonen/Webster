@@ -1,7 +1,7 @@
 import os
 
-from webster.conf import settings
-from webster.net.request import Request
+from conf import settings
+from net.request import Request
 
 
 class Downloader:

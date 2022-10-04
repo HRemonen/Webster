@@ -6,12 +6,12 @@ from concurrent.futures import ThreadPoolExecutor
 
 from typing import Optional
 
-from webster import robotstxt
-from webster.utils import validators
-from webster.utils import url_tools
-from webster.net.request import Request
-from webster.core.parser import Parser
-from webster.conf import settings
+import robotstxt
+from utils import validators
+from utils import url_tools
+from net.request import Request
+from core.parser import Parser
+from conf import settings
 
 
 class Crawler:
@@ -64,9 +64,7 @@ class Crawler:
         
         self.queue = queue.Queue()
         
-        #Store response objects in a hashmap for easy access.
         self.responses = {}
-        
         self.robots_allowed = {}
         self.robots_excluded = {}
     
@@ -77,8 +75,7 @@ class Crawler:
         Checks if request is already made to this URL.
         """
         
-        #If this URL is already requested, it is stored in 
-        #responses. Check this before anything.
+        #If this URL is already requested, it is stored in responses.
         #Also check if the URL has already been excluded by the robotstxt
         #ignore these scenarios.
         if url not in self.responses and url not in self.robots_excluded:
@@ -102,22 +99,18 @@ class Crawler:
                     delay = 1 if not rp.delay() else rp.delay()
                 else: delay = 0
                 
-                #Send the request to the server and sleep for the time of
-                #delay parameter.
+                #Send the request to the server and sleep for the time of delay parameter.
                 request = Request(url)
                 
                 time.sleep(delay)
                 
                 print(f"{self} Requesting {request}")                   #SWITCH TO LOGGING
-                self.responses[request.url] = request
                 
-                #IF allowed urls was not given as parameter, and
-                #we are respecting the robots.txt we can return our request.
+                #If allowed urls was not given, and we are respecting the robots.txt we can return our request.
                 if self.allowed_urls is None:
                     return request
                 
-                #IF allowed urls are given, check if request is 
-                #in the allowed ulrs. 
+                #If allowed urls are given, check if request is in the allowed ulrs. 
                 elif any(url_tools.URLnetloc(request.url)
                         in url_tools.URLnetloc(s) 
                         for s 
@@ -126,7 +119,6 @@ class Crawler:
             else:
                 #Request did not respect the robots.txt so we skip that
                 #and store the excluded url for later use.
-                #The content of this hashmap is trivial, so we store 1 as the value.
                 self.robots_excluded[base_url] = 1
                 print(f"{self} Robots.txt not allowing {base_url}")       #SWITCH TO LOGGING
     
@@ -144,8 +136,7 @@ class Crawler:
                 self.queue.put(response)
             
         else:
-            #Create thread pool executor. Worker count matches our 
-            #count of awaiting urls.
+            #Create thread pool executor. Worker count matches our count of awaiting urls.
             with ThreadPoolExecutor(len(urls)) as executor:
                 #Add requests to ThreadPool    
                 request_futures = executor.map(lambda url : self._request(url), urls)
@@ -166,23 +157,18 @@ class Crawler:
             #Parse response anchors with Parser module.
             response_anchors = Parser(rqs).parse_anchors()
             #Store new URLs to this list later on.
-            new_URLs = []
+            found_urls = []
             
-            #If new anchors were found, add them to the
-            #list if they have not already been requested.
+            #If new anchors were found, add them to the list
             if response_anchors:
                 for resp in response_anchors:
                     if resp not in self.responses:
-                        new_URLs.append(resp)
+                        found_urls.append(resp)
             
-            #IF new URLs were found, start requesting them.
-            if new_URLs:
-                return new_URLs
-                #self._start_requests(new_URLs) 
+            self.responses[rqs.url] = (rqs, found_urls) if found_urls else (rqs, None)
         
-        #Skip invalid requests where Webster.Request.body is None
-        #and thus cannot be parsed.
-        #Webster.Parser module raises TypeError if body is None.       
+        #Skip invalid requests where Request.body is None
+        #and thus cannot be parsed.      
         except TypeError:
             print(f"{self} Skipping {rqs}")                                 #SWITCH TO LOGGING
             
@@ -227,7 +213,8 @@ class Crawler:
 if __name__ == "__main__":
     url = "https://github.com/"
     sites = [ 
-            url, 
+            url,
+            "https://hs.fi/"
             ]
     empty = []
     
@@ -235,10 +222,9 @@ if __name__ == "__main__":
     
     ws = Crawler(sites)
     
-    print(ws)
     xs = ws.crawl()
     
-    print(len(xs))
+    
     print(xs)
 
   

@@ -5,8 +5,8 @@ from urllib.parse import urljoin
 
 from w3lib.html import safe_url_string
 
-from webster.utils import validators
-from webster.net.request import Request
+from utils import validators
+from net.request import Request
 
 
 class Parser:

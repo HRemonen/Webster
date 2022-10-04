@@ -1,6 +1,6 @@
 
 from urllib import robotparser
-from webster.utils import validators
+from utils import validators
 
 
 class RobotParser:
