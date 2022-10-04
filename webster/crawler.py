@@ -177,7 +177,8 @@ class Crawler:
             
             #IF new URLs were found, start requesting them.
             if new_URLs:
-                self._start_requests(new_URLs) 
+                return new_URLs
+                #self._start_requests(new_URLs) 
         
         #Skip invalid requests where Webster.Request.body is None
         #and thus cannot be parsed.

@@ -35,3 +35,15 @@ objects as dictionary for later use.
 ```Python
 crawled_sites = my_crawler.crawl()
 ```
+
+### Downloading html documents to disk
+
+Because Webster relies on the Webster.net.Request objects, we can initialize a Downloader instance and download each page to a html file.
+
+Files are stores in the DL_DIR directory defined in settings.
+```Python
+from webster.core import Downloader
+
+for req in crawled_sites.values():
+        dl = Downloader(req)
+        dl.download()
