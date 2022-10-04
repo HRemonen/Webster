@@ -7,11 +7,11 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
 import robotstxt
-from utils import validators
-from utils import url_tools
-from net.request import Request
-from core.parser import Parser
-from conf import settings
+from webster.utils import validators
+from webster.utils import url_tools
+from webster.net.request import Request
+from webster.core.parser import Parser
+from webster.conf import settings
 
 
 class Crawler:
@@ -166,6 +166,7 @@ class Crawler:
                         found_urls.append(resp)
             
             self.responses[rqs.url] = (rqs, found_urls) if found_urls else (rqs, None)
+            if found_urls: self._start_requests(found_urls)
         
         #Skip invalid requests where Request.body is None
         #and thus cannot be parsed.      

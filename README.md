@@ -17,8 +17,6 @@ Webster has been tested using Python 3.8+
 4. [Test documentation](docs/project_docs/testing.md)
 5. Changelog ?
 
-## Examples 
-
 ## Installation
 Install Webster using one off the following methods
 
@@ -70,6 +68,50 @@ To run test coverage use the [coverage](https://coverage.readthedocs.io/en/6.5.0
 
 ```bash
 python -m coverage run -m unittest
+```
+
+To show coverage report in terminal
+
+```bash
+python -m coverage report
+```
+
+Output should look something like this.
+
+```console
+Name                              Stmts   Miss  Cover
+-----------------------------------------------------
+test/__init__.py                      0      0   100%
+test/test_data/__init__.py           10      0   100%
+test/test_downloader.py              43      1    98%
+test/test_parser.py                  54      1    98%
+test/test_request.py                 49      2    96%
+test/test_robotstxt.py               23      1    96%
+test/test_url_tools.py               22      1    95%
+test/test_validators.py              53      1    98%
+webster/__init__.py                   0      0   100%
+webster/conf/__init__.py              0      0   100%
+webster/conf/settings.py              9      0   100%
+webster/core/__init__.py              0      0   100%
+webster/core/downloader.py           36      8    78%
+webster/core/parser.py               40      1    98%
+webster/net/__init__.py               0      0   100%
+webster/net/request/__init__.py      47      2    96%
+webster/pipelines/__init__.py         0      0   100%
+webster/robotstxt.py                 15      2    87%
+webster/utils/__init__.py             0      0   100%
+webster/utils/url_tools.py           15      0   100%
+webster/utils/validators.py          16      7    56%
+-----------------------------------------------------
+TOTAL                               432     27    94%
+```
+
+For a nicer report and more detailed use the html report
+
+```bash
+python -m coverage report html
+
+open htmlcov/index.html   
 ```
 
 

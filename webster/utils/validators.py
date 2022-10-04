@@ -1,5 +1,4 @@
 import re
-from typing import Type
 
 def ModeValidator(mode: str) -> bool:
     """

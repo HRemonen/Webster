@@ -3,8 +3,8 @@ import pycurl
 from io import BytesIO 
 from typing import Optional
 
-from utils import url_tools
-from utils import validators
+from webster.utils import url_tools
+from webster.utils import validators
 
 
 class Request:
