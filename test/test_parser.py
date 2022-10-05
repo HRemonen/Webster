@@ -55,9 +55,10 @@ class TestParser(unittest.TestCase):
         #Test TypeError if Request could not be requested.
         #Failed Requests have body of None type.
         
-        r = self.request_class(url="https://www")
-        parser = self.parser_class(request=r)
-        self.assertRaises(Exception, parser.parse_anchors)
+        with self.assertRaises((TypeError, ValueError)):
+            r = self.request_class(url="https://www")
+            parser = self.parser_class(request=r)
+            parser.parse_anchors
         
     def testParseAnchorsMock(self):
         #Test succesful parsing returning list of elements.
@@ -78,9 +79,10 @@ class TestParser(unittest.TestCase):
         
     def testParserIndexBAD(self):
         #Test bad url raises error
-        r = self.request_class(url="https://www")
-        parser = self.parser_class(request=r)
-        self.assertRaises(Exception, parser.parse_index)
+        with self.assertRaises((TypeError, ValueError)):
+            r = self.request_class(url="https://www")
+            parser = self.parser_class(request=r)
+            parser.parse_index
     
     def testParserIndexMock(self):  
         #Test succesful parsing returning list of indices or dataset.
