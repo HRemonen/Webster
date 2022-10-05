@@ -57,12 +57,10 @@ class Crawler:
             self.start_urls = start_urls
         else: self.start_urls = None
         
-        if allowed_urls:
-            if validators.URLValidator(allowed_urls):
-                self.allowed_urls = allowed_urls
-            else: raise ValueError(
-                "Check allowed url values, urls must not be empty")
-        else: self.allowed_urls = None
+        if allowed_urls in [None, [""], [], [" "]]:
+            self.allowed_urls = None
+        elif validators.URLValidator(allowed_urls):
+            self.allowed_urls = allowed_urls
         
         self.crawling = False
         
@@ -221,58 +219,6 @@ if __name__ == "__main__":
 
     #anchors = list(xs.values())[0][1]
 
-    
-    #1. allowed urls not containing any starting urls should return empty dict
-    url = "https://example.com/"
-    ws = Crawler(url, allowed_urls=["https://ex.com/"])                             #{}
-    print(ws.crawl())
-        
-    url = "https://example.com/"
-    ws = Crawler(url, allowed_urls=["https://remonen.fi/"])                         #{}
-    print(ws.crawl())
-    
-    #2. Allowed urls of wrong type should return TypeError
-    try:
-        ws = Crawler([url], allowed_urls=[123])                                     #TypeError
-        print(ws.crawl())
-    except TypeError:
-        print("TypeError")
-    
-    #3. bad starting url should return None
-    url = "https://example.com/"
-    ws = Crawler(list(url), allowed_urls=[])                                        #None
-    print(ws.crawl())
-  
-    ws = Crawler("abcd.efg", allowed_urls=[])                                       #None
-    print(ws.crawl())
-    
-    #4. Many starting urls some of which are forbidden type
-    #Raises TypeError
-    urls = ["https://example.com/",
-            "https://remonen.fi/",
-            "abdhs",
-            1234,
-            "https://is.fi/"]                                                       #TypeError
-    try:
-        ws = Crawler(urls, allowed_urls=["https://example.com/"])
-        print(ws)
-    except TypeError:
-        print("TypeError")
-    
-    #5. Many starting urls some of which are not valid urls
-    #returns None
-    urls = ["https://example.com/",
-            "https://remonen.fi/",
-            "abdhs",
-            ]      
-    ws = Crawler(urls, allowed_urls=["https://example.com/"])                         #None
-    print(ws.crawl())
-    
-    #6. Single url valid
-    url = "https://example.com/"
-    ws = Crawler([url], allowed_urls=["https://example.com/"])                         #Dict
-    xs = ws.crawl()
-    print(xs)
     
     url = "https://github.com/"
     ws = Crawler([url], allowed_urls=["https://github.com/"])                         #Dict
