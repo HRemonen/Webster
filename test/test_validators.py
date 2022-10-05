@@ -58,15 +58,27 @@ class TestURLValidator(unittest.TestCase):
         self.assertTrue(validators.URLValidator("ftp://example.com"))
      
     def testURLValidatorNotSupportedScheme(self):
-        self.assertFalse(validators.URLValidator("mailto:info@remonen.fi"))
-        self.assertFalse(validators.URLValidator("data:remonen"))
-        self.assertFalse(validators.URLValidator("about:remonen"))
+        with self.assertRaises(ValueError):
+            validators.URLValidator("mailto:info@remonen.fi")
+            
+        with self.assertRaises(ValueError):
+            validators.URLValidator("data:remonen")
+            
+        with self.assertRaises(ValueError):    
+            validators.URLValidator("about:remonen")
     
     def testURLValidatorNoScheme(self): 
-        self.assertRaises(TypeError, validators.URLValidator("asd"))
-        self.assertRaises(TypeError, validators.URLValidator("/asd"))
-        self.assertRaises(TypeError, validators.URLValidator("/asd/"))
-        self.assertRaises(TypeError, validators.URLValidator("/asd:foo"))
+        with self.assertRaises(ValueError):
+            validators.URLValidator("asd")
+            
+        with self.assertRaises(ValueError):
+            validators.URLValidator("/asd")
+            
+        with self.assertRaises(ValueError):
+            validators.URLValidator("/asd/")
+            
+        with self.assertRaises(ValueError):
+            validators.URLValidator("/asd:foo")
 
 if __name__ == "__main__":
     unittest.main()

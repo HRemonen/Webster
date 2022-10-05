@@ -69,6 +69,10 @@ def URLValidator(url: list) -> bool:
                     "Expected URL type of list or string, instead got: "
                     , type(url))
         else:
-            
-            return all([_validate(x) for x in url])           
-    else: return _validate(url)           
+            check = all([_validate(x) for x in url])       
+    else: check = _validate(url)       
+    if check:
+        return check
+    else:
+        raise ValueError(
+            "URL not of accepted form, please check form: ", url)  
