@@ -16,7 +16,9 @@ def netloc_url(url: str) -> str:
     
     """
     if not isinstance(url, str):
-        raise TypeError
+        raise TypeError(
+                "Expected URL type of string, instead got: "
+                , type(input))
     
     url = urlparse(url)
         
@@ -35,7 +37,9 @@ def base_url(url: str) -> str:
     
     """
     if not isinstance(url, str):
-        raise TypeError
+        raise TypeError(
+                "Expected URL type of string, instead got: "
+                , type(input))
     
     url = urlparse(url)
         

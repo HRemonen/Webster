@@ -47,6 +47,7 @@ class Crawler:
         
         self._ID = uuid.uuid1()
         
+        
         if mode is not None:
             if validators.ModeValidator(mode):
                 self.mode = mode
@@ -54,10 +55,13 @@ class Crawler:
         
         if validators.URLValidator(start_urls):
             self.start_urls = start_urls
+        else: self.start_urls = None
         
-        if allowed_urls is not None:
+        if allowed_urls:
             if validators.URLValidator(allowed_urls):
                 self.allowed_urls = allowed_urls
+            else: raise ValueError(
+                "Check allowed url values, urls must not be empty")
         else: self.allowed_urls = None
         
         self.crawling = False
@@ -74,35 +78,31 @@ class Crawler:
         
         Checks if request is already made to this URL.
         """
-        
-        #If this URL is already requested, it is stored in responses.
-        #Also check if the URL has already been excluded by the robotstxt
-        #ignore these scenarios.
-        if url not in self.responses and url not in self.robots_excluded:
+        if url not in (self.responses, self.robots_excluded):
             #BEFORE WE MAKE THE REQUEST TO THE SERVER!!!!
-            #IF we have already encountered this URL and fetched its
-            #robots.txt file, we have stored it inside robots_allowed.
-            #IF we haven't, then we have to fetch the robots.txt and read it
             base_url = url_tools.base_url(url)
+            rp = None
             if base_url not in self.robots_allowed:
-                rp = robotstxt.RobotParser(base_url + "robots.txt")
-                #Store the RobotParser object to the hashmap for later use cases.
-                self.robots_allowed[base_url] = rp
+                try:
+                    rp = robotstxt.RobotParser(base_url + "robots.txt")
+                    #Store the RobotParser object to the hashmap for later use cases.
+                    self.robots_allowed[base_url] = rp
+                    print(f"{self} Robots.txt found {base_url}")           #SWITCH TO LOGGING
+                except ValueError:
+                    print(f"{self} Robots.txt not found {base_url}")       #SWITCH TO LOGGING
             
-            rp = self.robots_allowed[base_url]
-            
-            if rp.allowed(url):
-                #Check robots.txt crawl_delay and act accordingly
-                #We do not want to overload the host and have our IP banned...
-                #Set delay to the value in robots.txt or 1 if not given.
+            if not rp or rp.allowed(url):
+                delay = 0
                 if settings.OBEY_ROBOTSTXT:
-                    delay = 1 if not rp.delay() else rp.delay()
-                else: delay = 0
+                    if rp is not None and rp.delay():
+                        delay = rp.delay()
                 
                 #Send the request to the server and sleep for the time of delay parameter.
                 request = Request(url)
-                
                 time.sleep(delay)
+                
+                if request.url is None:
+                    return None
                 
                 print(f"{self} Requesting {request}")                   #SWITCH TO LOGGING
                 
@@ -133,7 +133,9 @@ class Crawler:
         if settings.OBEY_ROBOTSTXT:
             for url in urls:
                 response = self._request(url)
-                self.queue.put(response)
+                if response is not None:
+                    self.queue.put(response)
+                else: self.crawling = False
             
         else:
             #Create thread pool executor. Worker count matches our count of awaiting urls.
@@ -192,8 +194,12 @@ class Crawler:
             raise RuntimeError("Already crawling!")
         self.crawling = True
         
+        if self.start_urls is None:
+            return None
+        
         #Get requests to queue
         self._start_requests(self.start_urls)
+
              
         while self.crawling:
             print("Queue size:", self.queue.qsize())        #SWITCH TO LOGGING? NECESSARY????
@@ -212,22 +218,63 @@ class Crawler:
         return f"Crawler: " + str(self._ID)
         
 if __name__ == "__main__":
-    url = "https://github.com/"
-    sites = [ 
-            url,
-            "https://hs.fi/"
-            ]
-    empty = []
-    
-    allowed = ["https://github.com/"]
-    
-    ws = Crawler(sites, allowed_urls=["https://hs.fi/"])
-    
-    xs = ws.crawl()
-    anchors = list(xs.values())[0][1]
-    
-    
-    
-    print()
 
+    #anchors = list(xs.values())[0][1]
+
+    
+    #1. allowed urls not containing any starting urls should return empty dict
+    url = "https://example.com/"
+    ws = Crawler(url, allowed_urls=["https://ex.com/"])                             #{}
+    print(ws.crawl())
+        
+    url = "https://example.com/"
+    ws = Crawler(url, allowed_urls=["https://remonen.fi/"])                         #{}
+    print(ws.crawl())
+    
+    #2. Allowed urls of wrong type should return TypeError
+    try:
+        ws = Crawler([url], allowed_urls=[123])                                     #TypeError
+        print(ws.crawl())
+    except TypeError:
+        print("TypeError")
+    
+    #3. bad starting url should return None
+    url = "https://example.com/"
+    ws = Crawler(list(url), allowed_urls=[])                                        #None
+    print(ws.crawl())
   
+    ws = Crawler("abcd.efg", allowed_urls=[])                                       #None
+    print(ws.crawl())
+    
+    #4. Many starting urls some of which are forbidden type
+    #Raises TypeError
+    urls = ["https://example.com/",
+            "https://remonen.fi/",
+            "abdhs",
+            1234,
+            "https://is.fi/"]                                                       #TypeError
+    try:
+        ws = Crawler(urls, allowed_urls=["https://example.com/"])
+        print(ws)
+    except TypeError:
+        print("TypeError")
+    
+    #5. Many starting urls some of which are not valid urls
+    #returns None
+    urls = ["https://example.com/",
+            "https://remonen.fi/",
+            "abdhs",
+            ]      
+    ws = Crawler(urls, allowed_urls=["https://example.com/"])                         #None
+    print(ws.crawl())
+    
+    #6. Single url valid
+    url = "https://example.com/"
+    ws = Crawler([url], allowed_urls=["https://example.com/"])                         #Dict
+    xs = ws.crawl()
+    print(xs)
+    
+    url = "https://github.com/"
+    ws = Crawler([url], allowed_urls=["https://github.com/"])                         #Dict
+    xs = ws.crawl()
+    print(xs)
