@@ -109,7 +109,7 @@ TOTAL                               432     27    94%
 For a nicer report and more detailed use the html report
 
 ```bash
-python -m coverage report html
+python -m coverage html
 
 open htmlcov/index.html   
 ```
