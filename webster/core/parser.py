@@ -69,10 +69,10 @@ class Parser:
         for anchor in extractor_elements:
             url = None
             #if anchor is URL instead of relative path add it to the urls list.
-            if validators.URLValidator(anchor):
-                url = anchor
-                
-            else:
+            try:
+                if validators.URLValidator(anchor):
+                    url = anchor
+            except (ValueError, TypeError):
                 url = urljoin(base_url, anchor)
             
             if url is not None and url not in urls:
