@@ -4,4 +4,4 @@ Webster testing consists of automated unittesting and integration testing but al
 ## Unittesting and integration testing
 
 
-![](static/Screenshot%202022-10-04%20at%2019.57.03.png)
+![](static/coverage_report.png)
