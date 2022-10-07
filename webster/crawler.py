@@ -76,10 +76,20 @@ class Crawler:
         
         Checks if request is already made to this URL.
         """
-        if url not in (self.responses, self.robots_excluded):
+        
+        if url not in self.responses or url not in self.robots_excluded:
             #BEFORE WE MAKE THE REQUEST TO THE SERVER!!!!
             base_url = url_tools.base_url(url)
             rp = None
+            
+            allowed = any(base_url
+                        in url_tools.base_url(s) 
+                        for s 
+                        in self.allowed_urls)
+            
+            if not allowed:
+                return None
+            
             if base_url not in self.robots_allowed:
                 try:
                     rp = robotstxt.RobotParser(base_url + "robots.txt")
@@ -88,6 +98,8 @@ class Crawler:
                     print(f"{self} Robots.txt found {base_url}")           #SWITCH TO LOGGING
                 except ValueError:
                     print(f"{self} Robots.txt not found {base_url}")       #SWITCH TO LOGGING
+                except Exception as e:
+                    print(f"{self} Unexpected exception occured {base_url}:, {e}")       #SWITCH TO LOGGING
             
             if not rp or rp.allowed(url):
                 delay = 0
@@ -96,24 +108,21 @@ class Crawler:
                         delay = rp.delay()
                 
                 #Send the request to the server and sleep for the time of delay parameter.
-                request = Request(url)
-                time.sleep(delay)
+                try:
+                    request = Request(url)
+                    self.responses[request.url] = request
+                except (ValueError, TypeError) as e:
+                    print(f"{self} Error requesting {base_url}:, {e}")       #SWITCH TO LOGGING
+                    return None
                 
                 if request.url is None:
                     return None
                 
                 print(f"{self} Requesting {request}")                   #SWITCH TO LOGGING
+                time.sleep(delay)
                 
-                #If allowed urls was not given, and we are respecting the robots.txt we can return our request.
-                if self.allowed_urls is None:
-                    return request
+                return request
                 
-                #If allowed urls are given, check if request is in the allowed ulrs. 
-                elif any(url_tools.netloc_url(request.url)
-                        in url_tools.netloc_url(s) 
-                        for s 
-                        in self.allowed_urls):
-                    return request
             else:
                 #Request did not respect the robots.txt so we skip that
                 #and store the excluded url for later use.
@@ -130,11 +139,13 @@ class Crawler:
         
         if settings.OBEY_ROBOTSTXT:
             for url in urls:
-                response = self._request(url)
-                if response is not None:
-                    self.queue.put(response)
-                else: self.crawling = False
-            
+                if url not in self.responses:
+                    response = self._request(url)
+                    if response is not None:
+                        self.queue.put(response)
+                    elif self.queue.qsize() == 0:
+                        self.crawling = False
+
         else:
             #Create thread pool executor. Worker count matches our count of awaiting urls.
             with ThreadPoolExecutor(len(urls)) as executor:
@@ -165,8 +176,10 @@ class Crawler:
                     if resp not in self.responses:
                         found_urls.append(resp)
             
-            self.responses[rqs.url] = (rqs, found_urls) if found_urls else (rqs, None)
-            if found_urls: self._start_requests(found_urls)
+            if found_urls: 
+                self._start_requests(found_urls)
+
+                
         
         #Skip invalid requests where Request.body is None
         #and thus cannot be parsed.      
@@ -220,7 +233,7 @@ if __name__ == "__main__":
     #anchors = list(xs.values())[0][1]
 
     
-    url = "https://github.com/"
-    ws = Crawler([url], allowed_urls=["https://github.com/"])                         #Dict
+    url = "https://webscraper.io/test-sites"
+    ws = Crawler([url], allowed_urls=["https://webscraper.io/"])                        
     xs = ws.crawl()
     print(xs)
