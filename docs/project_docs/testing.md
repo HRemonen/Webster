@@ -20,4 +20,40 @@ Objective has been to find any real use bugs or other issues before pushing the 
 `Webster` has been tested on macOS and Linux environments using different user inputted values (including forbidden values), different `Crawler` arguments and different websites.
 
 
-        
+## Running automated tests
+Webster uses [unittest](https://docs.python.org/3/library/unittest.html) for testing.
+
+To run all the tests use the following command:
+
+```bash
+python -m unittest discover -v
+```
+
+Example: We want to test Parser module
+To run single module test use the following command:
+
+```bash
+python -m unittest test.test_parser -v
+```
+
+
+## Creating coverage report
+To run test coverage use the [coverage](https://coverage.readthedocs.io/en/6.5.0/) module
+
+```bash
+python -m coverage run -m unittest
+```
+
+To show coverage report in terminal
+
+```bash
+python -m coverage report
+```
+
+For a nicer report and more detailed use the html report
+
+```bash
+python -m coverage html
+
+open htmlcov/index.html   
+```
