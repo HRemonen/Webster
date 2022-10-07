@@ -43,7 +43,20 @@ Because Webster relies on the Webster.net.Request objects, we can initialize a D
 Files are stores in the DL_DIR directory defined in settings.
 ```Python
 from webster.core import Downloader
+#Bacause Crawler return crawled sites in format:
+# {
+# url: (webster.net.Request, 
+#       [list of adjacent anchors])
+# }
+#So basically a dictionary where key is the crawled url
+#and value is a tuple of Request object and a list of 
+#anchors.
 
-for req in crawled_sites.values():
+#To get the anchors directly
+anchors = list(crawled_sites.values())[0][1]
+for url in anchors:
         dl = Downloader(req)
         dl.download()
+
+
+```
