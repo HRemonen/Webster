@@ -15,7 +15,7 @@ Webster has been tested using Python 3.8+
 2. [Architectural model](docs/project_docs/architecture.md)
 3. [Functional specification](docs/project_docs/functional_spec.md)
 4. [Test documentation](docs/project_docs/testing.md)
-5. Changelog ?
+
 
 ## Installation
 Install Webster using one off the following methods
