@@ -91,3 +91,20 @@ for url in crawled_sites.values():
 
         yield anchors, indices
 ```
+
+### Parsing other data
+
+Above is just an example of what you could use `Parser` module for after crawling
+`create_index` method creates a dataset used to store crawled sites to databases.
+Indices constructs of the following information
+```Python
+indice = {
+            "url": root_url,
+            "adjacents": adjacent,
+            "title": title,
+            "description": description,
+            "keywords": kwords,
+            "text": content
+        }
+```
+You could parse any of these values after crawling depending on your needs and use them in your code.
