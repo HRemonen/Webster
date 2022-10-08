@@ -24,39 +24,70 @@ my_crawler = Crawler(
                 sites, 
                 allowed_urls=allowed
             )
+#Now Crawler instance has been created and is ready to use.
 
 ```
 ### Crawling
 
-Now that the Crawler is configured start crawling.
-Crawler returns the crawled websites as Webster.net.Request 
+Now that the `Crawler` is configured start crawling.
+`Crawler` returns the crawled websites as `Request` 
 objects as dictionary for later use.
 
 ```Python
 crawled_sites = my_crawler.crawl()
 ```
 
-### Downloading html documents to disk
+### Downloading Request object as html documents to disk
 
-Because Webster relies on the Webster.net.Request objects, we can initialize a Downloader instance and download each page to a html file.
+Because `Webster` relies on the `Request` objects, we can initialize a `Downloader` instance and download each page to a html file.
 
-Files are stores in the DL_DIR directory defined in settings.
+Files are stores in the `DL_DIR` directory defined in `settings`.
+
 ```Python
 from webster.core import Downloader
 #Bacause Crawler return crawled sites in format:
 # {
-# url: (webster.net.Request, 
-#       [list of adjacent anchors])
+# url: webster.net.Request 
 # }
 #So basically a dictionary where key is the crawled url
-#and value is a tuple of Request object and a list of 
-#anchors.
+#and value Request object
+#Returned dictionary should cover all the found urls including
+#every anchor possible.
 
-#To get the anchors directly
-anchors = list(crawled_sites.values())[0][1]
-for url in anchors:
+#You could iterate over the crawled sites
+#using for loop.
+#Each Request must have its own Downloader instance.
+
+for url in crawled_sites.values():
         dl = Downloader(req)
         dl.download()
 
+#Downloaded files will appear in the downloaded folder 
+#determited in the settings file.
+```
 
+### Parsing Request objects
+
+`Webster` allows for reprosessing `Request` objects after crawling.
+
+`Parser` module has `parse_anchors` and `parse_index` methods for prosessing `Request` objects.
+
+Methods can be used in your own code for accomplishing various functionalities.
+
+```Python
+for url in crawled_sites.values():
+        p = Parser(req)
+        
+        #To create indices of Requests you can call the method
+        #create_index
+        indices = p.parse_index()
+
+        #You could either parse anchors by using the method
+        #parse_anchors
+        anchors = p.parse_anchors()
+        #or if you are creating indices, you can just get the
+        #anchors using the 'adjacent' key.
+        anchors = indices['adjacent']
+
+        yield anchors, indices
 ```
