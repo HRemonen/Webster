@@ -75,6 +75,8 @@ for url in crawled_sites.values():
 Methods can be used in your own code for accomplishing various functionalities.
 
 ```Python
+from webster.core import Parser
+
 for url in crawled_sites.values():
         p = Parser(req)
         
