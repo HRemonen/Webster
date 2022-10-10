@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "webster"
+version = "1.0.0"
+description = "Website crawler-ish thing?"
+authors = ["Henri Remonen"]
+license = "BSD"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+lxml = "4.9.1"
+pycurl = "7.45.1"
+pymongo = "4.2.0"
+w3lib = "2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
