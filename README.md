@@ -8,7 +8,7 @@ optionally a list of urls to stay within.
 Webster could be used as a broad crawler also, but it is not optimized for that as of now.
 
 ## Version
-Webster has been tested using Python 3.8+
+Webster has been tested using Python 3.10+
 
 ## Project documentation
 1. [Quick start guide](docs/project_docs/quickstart.md)
@@ -24,6 +24,7 @@ From requirements.txt
 ```bash
 pip install -r requirements.txt
 ```
+
 
 ### Dependencies
 Webster is using multiple external Python packages some of which are:
