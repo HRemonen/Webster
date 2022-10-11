@@ -1,17 +1,33 @@
 [tool.poetry]
 name = "webster"
-version = "1.0.0"
+version = "0.1.0"
 description = "Website crawler-ish thing?"
-authors = ["Henri Remonen"]
-license = "BSD"
+authors = [
+    "Henri Remonen <henri@remonen.fi>",
+    ]
+maintainers = [
+    "Henri Remonen <henri@remonen.fi>",
+]
+homepage = "https://github.com/HRemonen/Webster"
+repository = "https://github.com/HRemonen/Webster"
+
+license = "BSD-3-Clause"
 readme = "README.md"
+
+packages = [
+    { include = "webster" },
+]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/HRemonen/Webster/issues"
+
 
 [tool.poetry.dependencies]
 python = "^3.10"
-lxml = "4.9.1"
-pycurl = "7.45.1"
-pymongo = "4.2.0"
-w3lib = "2.0.1"
+lxml = "^4.9.1"
+pycurl = "^7.45.1"
+w3lib = "^2.0.1"
+pymongo = "^4.2.0"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -59,7 +59,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "3bdd16096866c916814d2e7c53b4430c3965429a788ffd2546e148efe8f1bfba"
+content-hash = "b41591c1145d06f4d096711f71fcdd656e297dbb83f014604213e0652492cb0c"
 
 [metadata.files]
 coverage = [
