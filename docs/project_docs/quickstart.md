@@ -44,7 +44,7 @@ Because `Webster` relies on the `Request` objects, we can initialize a `Download
 Files are stores in the `DL_DIR` directory defined in `settings`.
 
 ```Python
-from webster.core import Downloader
+from webster.core.downloader import Downloader
 #Bacause Crawler return crawled sites in format:
 # {
 # url: webster.net.Request 
@@ -75,7 +75,7 @@ for url in crawled_sites.values():
 Methods can be used in your own code for accomplishing various functionalities.
 
 ```Python
-from webster.core import Parser
+from webster.core.parser import Parser
 
 for url in crawled_sites.values():
         p = Parser(req)
