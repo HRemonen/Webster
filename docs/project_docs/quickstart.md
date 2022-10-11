@@ -73,26 +73,29 @@ for url in crawled_sites.values():
 `Parser` module has `parse_anchors` and `parse_index` methods for prosessing `Request` objects.
 
 Methods can be used in your own code for accomplishing various functionalities.
+Example below is simple generator using the dictionary `Crawler`returns.
 
 ```Python
 from webster.core.parser import Parser
 
-for url in crawled_sites.values():
-        p = Parser(req)
-        
-        #To create indices of Requests you can call the method
-        #create_index
-        indices = p.parse_index()
+def site_gen(crawler_item: dict) -> tuple:
+        for url in crawler_item.values():
+                p = Parser(req)
+                
+                #To create indices of Requests you can call the method
+                #create_index
+                indices = p.parse_index()
 
-        #You could either parse anchors by using the method
-        #parse_anchors
-        anchors = p.parse_anchors()
-        #or if you are creating indices, you can just get the
-        #anchors using the 'adjacent' key.
-        anchors = indices['adjacent']
+                #You could either parse anchors by using the method
+                #parse_anchors
+                anchors = p.parse_anchors()
+                #or if you are creating indices, you can just get the
+                #anchors using the 'adjacent' key.
+                anchors = indices['adjacent']
 
-        yield anchors, indices
+                yield anchors, indices
 ```
+It does not have to be a generator thought, you could also loop and print or whatever each value.
 
 ### Parsing other data
 
