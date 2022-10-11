@@ -1,4 +1,0 @@
-lxml==4.9.1
-pycurl==7.45.1
-pymongo==4.2.0
-w3lib==2.0.1
