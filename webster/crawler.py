@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from typing import Optional
 
-import robotstxt
+from webster import robotstxt
 from webster.utils import validators
 from webster.utils import url_tools
 from webster.net.request import Request
