@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "webster"
+name = "Webster-Crawler"
 version = "0.1.0"
 description = "Website crawler-ish thing?"
 authors = [
