@@ -18,13 +18,27 @@ Webster has been tested using Python 3.10+
 
 
 ## Installation
-Install Webster using one off the following methods
+Install Webster using pip install
 
-From requirements.txt
 ```bash
-pip install -r requirements.txt
+pip install webster-crawler
 ```
 
+### Development
+Webster is using [Poetry](https://python-poetry.org/) as packaging and dependency manager.
+
+Install dependencies using
+```bash
+poetry install
+```
+
+Remember to build the source and wheels archives when changes are made using
+
+```bash
+poetry build
+```
+
+Include all build changes etc. in PR.
 
 ### Dependencies
 Webster is using multiple external Python packages some of which are:
@@ -33,19 +47,7 @@ Webster is using multiple external Python packages some of which are:
 + [pycURL](http://pycurl.io/) used for networking and making requests to a http server.
 + [pymongo](https://pymongo.readthedocs.io/en/stable/) tools for working with mongoDB using python
 
-Use [pipreqs](https://pypi.org/project/pipreqs/) to make new requirements.txt
-if new dependencies are added in PR force over requirements.txt
-and make sure to include the new one in PR.
-
-```bash
-pipreqs --force
-```
-
-Update dependencies if necessary
-
-```bash
-pip install -U -r requirements.txt
-```
+Remember to include all new dependencies in PRs and update readme etc accordingly.
 
 ## Testing
 Webster uses [unittest](https://docs.python.org/3/library/unittest.html) for testing.
